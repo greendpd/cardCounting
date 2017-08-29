@@ -1,4 +1,4 @@
-app.controller('homeCtrl',function($scope){
+app.controller('homeCtrl',function($scope,gameSrvc){
   $scope.test="Home Controller Working"
 
 })
