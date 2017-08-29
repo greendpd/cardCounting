@@ -1,7 +1,6 @@
 app.service('gameSrvc', function(deckSrvc) {
   let m_numPlayers = 0;
   let m_numDecks = 8;
-  let m_deckCount = 0;
   let m_players = [];
   let m_dealerHand = [];
   let m_currentPlayer = 0;
@@ -22,6 +21,10 @@ app.service('gameSrvc', function(deckSrvc) {
 
   this.addPlayer = function(name, money) {
     m_players.push(new Player(name, money, m_players.length));
+  }
+
+  this.getPlayers = function() {
+    return m_players;
   }
 
   this.removePlayer = function() { //~~~Still need to handle computers going bankrupt
@@ -46,6 +49,7 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   this.deal = function() {
+    m_dealerHand = [];
     if (deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) {
       deckSrvc.shuffle();
     }
@@ -62,7 +66,25 @@ app.service('gameSrvc', function(deckSrvc) {
         current.blackjack = true;
       }
     }
+
+    m_dealerHand.push(deckSrvc.draw());
+    m_dealerHand.push(deckSrvc.draw());
+    if (total(m_dealerHand) === 21) { //If a blackjack, game's over!
+      resolveGame();
+    }
+
+
     m_currentPlayer = 0;
+  }
+
+  this.dealerTopCard = function() {
+    if (m_dealerHand.length > 0) {
+      return m_dealerHand[0];
+    }
+  }
+
+  this.getCurrentPlayer=function(){
+    return m_currentPlayer;
   }
 
   this.hit = function() {
@@ -80,7 +102,6 @@ app.service('gameSrvc', function(deckSrvc) {
 
   this.stand = function() {
     incrementPlayer();
-    processTurnEnd();
   }
 
   this.double = function() {
@@ -110,6 +131,10 @@ app.service('gameSrvc', function(deckSrvc) {
     currPlayer.cards.push(newHand);
   }
 
+  this.canHit = function() {
+    return (total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]) < 21)
+  }
+
   this.canDouble = function() { //No doubling after a split
     return (m_players[m_currentPlayer].money >= m_players[m_currentPlayer].bet * 2 && m_players[m_currentPlayer].cards.length === 1);
   }
@@ -123,6 +148,10 @@ app.service('gameSrvc', function(deckSrvc) {
     if (cardValue(currentHand[0]) !== cardValue(currentHand[1])) {
       return false;
     }
+    if(currPlayer.cards.length>3){  //allow only 4 hands
+      return false;
+    }
+    return true;
   }
 
   function incrementPlayer() {
@@ -164,6 +193,26 @@ app.service('gameSrvc', function(deckSrvc) {
     return total;
   }
 
+  this.totalValue = function(cards) {
+    return total(cards);
+  }
+
+  this.isSoft = function(cards) {
+    let hasAce = false;
+    let total = 0;
+    cards.forEach(function(cur, i, arr) {
+      let temp = cardValue(cur);
+      if (temp === 1) {
+        hasAce = true;
+      }
+      total += temp;
+    })
+    if (hasAce && total <= 11) {
+      return true;
+    }
+    return false;
+  }
+
   function resolveGame() {
     let dealerTotal = total(m_dealerHand)
     if (m_dealerHand.length == 2 && dealerTotal == 21) {
@@ -173,6 +222,10 @@ app.service('gameSrvc', function(deckSrvc) {
         }
       })
       return;
+    }
+
+    while (total(m_dealerHand) < 17) {
+      m_dealerHand.push(deckSrvc.draw());
     }
 
     m_players.forEach((cur, i, arr) => {
@@ -211,4 +264,137 @@ app.service('gameSrvc', function(deckSrvc) {
     return true;
   }
 
+  function chartMove() {
+    //0:stand
+    //1:hit
+    //2:double
+    //3:stand
+    let hand = m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand];
+    let handVal = total(hand);
+    let soft = isSoft(hand);
+    let canDouble = this.canDouble();
+    let canSplit = this.canSplit();
+    let dealerTop=cardValue(dealerTopCard())
+    if (handVal >= 19) {
+      return 0;
+    }
+
+    if(canSplit){ //need to handle this first, so we don't find soft 16 doing it's stuff...
+      let myCard=cardValue(hand[0]);
+      if(myCard===1 ||myCard===8){
+        return 3;
+      }
+      if(myCard===2 ||myCard===3){
+        if(dealerTop>=8 || dealerTop===1){
+          return 1;
+        }
+        return 3;
+      }
+      if(myCard===4){
+        if(dealerTop===5||dealerTop===6){
+          return 3;
+        }
+        return 1;
+      }
+      if(myCard===5){
+        if(dealerTop===10||dealerTop===1){
+          return 1;
+        }
+        return 2;
+      }
+      if(myCard===6){
+        if(dealerTop>=2 && dealerTop<=6){
+          return 3;
+        }
+        return 1;
+      }
+      if(myCard===7){
+        if(dealerTop>=2 && dealerTop<=7){
+          return 3;
+        }
+        return 1;
+      }
+      if(myCard===9){
+        if(dealerTop===7 ||dealerTop===10||dealerTop===1){
+          return 0;
+        }
+        return 3;
+      }
+      if(myCard===10){
+        return 0;
+      }
+    }
+
+    if (soft) {
+      if (handVal===18){
+        if(dealerTop===2 || dealerTop===7 || dealerTop === 8){
+          return 0;
+        }
+        if(dealerTop>=3 && dealerTop<=6){
+          return 2;
+        }
+        return 1;
+      }
+      if(handVal===17){
+        if(dealerTop>=3 && dealerTop<=6){
+          return 2;
+        }
+        return 1;
+      }
+      if(handVal===16 || handval===15){
+        if(dealerTop>=4 && dealerTop<=6){
+          return 2;
+        }
+        return 1;
+      }
+      if(handVal===14 || handval===13){
+        if(dealerTop===5 || dealerTop===6){
+          return 2;
+        }
+        return 1;
+      }
+    }
+
+    if(handVal===17){
+      return 0;
+    }
+    if(handVal>=13&&handVal<=16){
+      if(dealerTop>=2 && dealerTop<=6){
+        return 0;
+      }
+      return 1;
+    }
+    if(handVal===12){
+      if(dealerTop>=4 && dealerTop<=6){
+        return 0;
+      }
+      return 1;
+    }
+    if(handVal===11){
+      if(dealerTop>=2&&dealerTop<=10){
+        return 2;
+      }
+      return 1;
+    }
+    if(handVal===10){
+      if(dealerTop>=2 && dealerTop<=9){
+        return 2;
+      }
+      return 1;
+    }
+    return 1;
+  }
+
+
+
 })
+
+
+
+
+
+
+
+
+
+//
