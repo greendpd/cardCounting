@@ -3,10 +3,32 @@ let app=angular.module('theApp',['ui.router']).config(function($urlRouterProvide
   $stateProvider
     .state('home',{
       url:'/',
-      templateUrl:'./views/home.html',
+      templateUrl:'../views/home.html',
       controller:'homeCtrl'
     })
-
-
-
+    .state('stats',{
+      url:'/stats',
+      templateUrl:'../views/stats.html',
+      controller:'statsCtrl'
+    })
+    .state('tableFreestyle',{
+      url:'/freestyle',
+      templateUrl:'../views/table.html',
+      controller:'freestyleCtrl'
+    })
+    .state('tableTrainCount',{
+      url:'/TrainCount',
+      templateUrl:'../views/table.html',
+      controller:'countCtrl'
+    })
+    .state('tableTrainChart',{
+      url:'/TrainChart',
+      templateUrl:'../views/table.html',
+      controller:'chartCtrl'
+    })
+    .state('about',{
+      url:'/about',
+      templateUrl:'../views/about.html',
+      controller:'aboutCtrl'
+    })
 })
