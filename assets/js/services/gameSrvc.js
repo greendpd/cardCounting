@@ -6,6 +6,34 @@ app.service('gameSrvc', function(deckSrvc) {
   let m_currentPlayer = 0;
   const MINREMAININGPERPLAYER = 5;
 
+  /*
+  ---Outward Facing Functions:
+  addPlayer(name, money)
+  getPlayers()
+    Unformatted cards
+  removePlayer
+    pops
+  changeNumDecks(newNum)
+  deal()
+  dealerTopCard()
+    This is unformatted, could be 51, could be 0
+  getCurrentPlayer--returns index
+  hit
+  stand
+  double
+  split
+  canHit
+  canDouble
+  canSplit
+  totalValue(cards)
+  isSoft(cards)
+  chartMove
+    returns:
+      0: stand
+      1: hit
+      2: double
+      3: split
+  */
   function Player(name, money, seat) {
     this.name = name;
     this.money = money;
@@ -264,7 +292,7 @@ app.service('gameSrvc', function(deckSrvc) {
     return true;
   }
 
-  function chartMove() {
+  this.chartMove = function() {
     //0:stand
     //1:hit
     //2:double
@@ -384,9 +412,6 @@ app.service('gameSrvc', function(deckSrvc) {
     }
     return 1;
   }
-
-
-
 })
 
 
