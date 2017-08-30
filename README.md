@@ -1,4 +1,7 @@
 # cardCounting
+8/30, 03:44
+Bet values are added and subtracted correctly
+Need to update game end so that you can't keep standing...
 
 8/30, 00:24
 Made deck shuffle before dealing any cards

@@ -48,19 +48,19 @@ app.service('gameSrvc', function(deckSrvc) {
     this.blackjack = false;
   }
 
-  this.setBet=function(player, bet){
-    if(m_players.length<=player){
+  this.setBet = function(player, bet) {
+    if (m_players.length <= player) {
       console.log("Attempted to set a bet outside of the player array");
       return;
     }
-    if(m_players)
-    m_players[player].bet=bet;
+    if (m_players)
+      m_players[player].bet = bet;
   }
 
   this.addPlayer = function(name, money) {
     m_players.push(new Player(name, money, m_players.length));
-    if(m_players.length>1){
-      m_players[m_players.length-1].bet=500;
+    if (m_players.length > 1) {
+      m_players[m_players.length - 1].bet = 500;
     }
   }
 
@@ -78,8 +78,8 @@ app.service('gameSrvc', function(deckSrvc) {
     aPlayer.cards = [
       []
     ];
-    this.currentHand = 0;
-    this.blackjack = false;
+    aPlayer.currentHand = 0;
+    aPlayer.blackjack = false;
   }
 
   this.changeNumDecks = function(numDecks) {
@@ -119,8 +119,8 @@ app.service('gameSrvc', function(deckSrvc) {
     m_currentPlayer = 0;
   }
 
-  this.getNumberAndSuit=function(card){
-    return [card%13+1,Math.floor(card%13)];
+  this.getNumberAndSuit = function(card) {
+    return [card % 13 + 1, Math.floor(card % 13)];
   }
 
   this.dealerTopCard = function() {
@@ -129,7 +129,7 @@ app.service('gameSrvc', function(deckSrvc) {
     }
   }
 
-  this.getCurrentPlayer=function(){
+  this.getCurrentPlayer = function() {
     return m_currentPlayer;
   }
 
@@ -178,14 +178,23 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   this.canHit = function() {
+    if (m_currentPlayer >= m_players.length) {
+      return false;
+    }
     return (total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]) < 21)
   }
 
   this.canDouble = function() { //No doubling after a split
+    if (m_currentPlayer >= m_players.length) {
+      return false;
+    }
     return (m_players[m_currentPlayer].money >= m_players[m_currentPlayer].bet * 2 && m_players[m_currentPlayer].cards.length === 1);
   }
 
   this.canSplit = function() {
+    if (m_currentPlayer >= m_players.length) {
+      return false;
+    }
     let currPlayer = m_players[m_currentPlayer];
     let currentHand = currPlayer.cards[currPlayer.currentHand];
     if (currentHand.length != 2) {
@@ -194,24 +203,28 @@ app.service('gameSrvc', function(deckSrvc) {
     if (cardValue(currentHand[0]) !== cardValue(currentHand[1])) {
       return false;
     }
-    if(currPlayer.cards.length>3){  //allow only 4 hands
+    if (currPlayer.cards.length > 3) { //allow only 4 hands
       return false;
     }
     return true;
   }
 
   function incrementPlayer() {
+    if (m_currentPlayer >= m_players.length) {
+      if (m_currentPlayer > m_players.length) {
+        console.log("Game ended on a player outside of the index");
+        return;
+      }
+      resolveGame();
+      return;
+    }
     if (m_players[m_currentPlayer].currentHand + 1 < m_players[m_currentPlayer].cards.length) {
       m_players[m_currentPlayer].currentHand++;
     } else {
       m_currentPlayer++;
-      if (m_currentPlayer >= m_players.length) {
-        if (m_currentPlayer > m_players.length) {
-          console.log("Game ended on a player outside of the index");
-          return;
-        }
-        resolveGame();
-      }
+    }
+    if(m_currentPlayer===m_players.length){
+      resolveGame();
     }
   }
 
@@ -264,7 +277,7 @@ app.service('gameSrvc', function(deckSrvc) {
     if (m_dealerHand.length == 2 && dealerTotal == 21) {
       m_players.forEach(function(cur, i, arr) {
         if (!cur.blackjack) { //They can't have split yet, so we're safe ignoring other possible hands
-          cur.money -= cur.bet;
+          cur.money -= Number(cur.bet);
         }
       })
       return;
@@ -273,20 +286,31 @@ app.service('gameSrvc', function(deckSrvc) {
     while (total(m_dealerHand) < 17) {
       m_dealerHand.push(deckSrvc.draw());
     }
+    dealerTotal = total(m_dealerHand);
+    console.log("dealer value: " + dealerTotal);
 
     m_players.forEach((cur, i, arr) => {
       if (cur.blackjack) {
-        cur.money += cur.bet * 1.5;
+        cur.money += Number(cur.bet) * 1.5;
       } else {
         cur.cards.forEach((hand) => {
-          if (total(hand) > dealerTotal) {
-            cur.money += cur.bet;
+          console.log(cur.name+": Card value: "+total(hand));
+          console.log("\tBet: "+cur.bet);
+          if (total(hand) > 21) {
+            console.log("OVER");
+            cur.money -=Number(cur.bet);
+            console.log(cur.money);
+          } else if (dealerTotal > 21) {
+            cur.money += Number(cur.bet);
+          } else if (total(hand) > dealerTotal) {
+            cur.money += Number(cur.bet);
           } else if (total(hand) < dealerTotal) {
-            cur.money -= cur.bet;
+            cur.money -= Number(cur.bet);
           }
         })
       }
     })
+
   }
 
   function prescreen(caller) {
@@ -296,11 +320,11 @@ app.service('gameSrvc', function(deckSrvc) {
       console.log("error in gameSrvc, trying to " + caller + " on an out-of-index player");
       return false;
     }
-    if(m_players[m_currentPlayer].cards.length===0){
+    if (m_players[m_currentPlayer].cards.length === 0) {
       console.log(`No cards array ${caller}`);
       return false;
     }
-    if(m_players[m_currentPlayer].cards[0].length==0){
+    if (m_players[m_currentPlayer].cards[0].length == 0) {
       console.log(`no hand is dealt ${caller}`);
       return false;
     }
@@ -329,110 +353,110 @@ app.service('gameSrvc', function(deckSrvc) {
     let soft = isSoft(hand);
     let canDouble = this.canDouble();
     let canSplit = this.canSplit();
-    let dealerTop=cardValue(dealerTopCard())
+    let dealerTop = cardValue(dealerTopCard())
     if (handVal >= 19) {
       return 0;
     }
 
-    if(canSplit){ //need to handle this first, so we don't find soft 16 doing it's stuff...
-      let myCard=cardValue(hand[0]);
-      if(myCard===1 ||myCard===8){
+    if (canSplit) { //need to handle this first, so we don't find soft 16 doing it's stuff...
+      let myCard = cardValue(hand[0]);
+      if (myCard === 1 || myCard === 8) {
         return 3;
       }
-      if(myCard===2 ||myCard===3){
-        if(dealerTop>=8 || dealerTop===1){
+      if (myCard === 2 || myCard === 3) {
+        if (dealerTop >= 8 || dealerTop === 1) {
           return 1;
         }
         return 3;
       }
-      if(myCard===4){
-        if(dealerTop===5||dealerTop===6){
+      if (myCard === 4) {
+        if (dealerTop === 5 || dealerTop === 6) {
           return 3;
         }
         return 1;
       }
-      if(myCard===5){
-        if(dealerTop===10||dealerTop===1){
+      if (myCard === 5) {
+        if (dealerTop === 10 || dealerTop === 1) {
           return 1;
         }
         return 2;
       }
-      if(myCard===6){
-        if(dealerTop>=2 && dealerTop<=6){
+      if (myCard === 6) {
+        if (dealerTop >= 2 && dealerTop <= 6) {
           return 3;
         }
         return 1;
       }
-      if(myCard===7){
-        if(dealerTop>=2 && dealerTop<=7){
+      if (myCard === 7) {
+        if (dealerTop >= 2 && dealerTop <= 7) {
           return 3;
         }
         return 1;
       }
-      if(myCard===9){
-        if(dealerTop===7 ||dealerTop===10||dealerTop===1){
+      if (myCard === 9) {
+        if (dealerTop === 7 || dealerTop === 10 || dealerTop === 1) {
           return 0;
         }
         return 3;
       }
-      if(myCard===10){
+      if (myCard === 10) {
         return 0;
       }
     }
 
     if (soft) {
-      if (handVal===18){
-        if(dealerTop===2 || dealerTop===7 || dealerTop === 8){
+      if (handVal === 18) {
+        if (dealerTop === 2 || dealerTop === 7 || dealerTop === 8) {
           return 0;
         }
-        if(dealerTop>=3 && dealerTop<=6){
+        if (dealerTop >= 3 && dealerTop <= 6) {
           return 2;
         }
         return 1;
       }
-      if(handVal===17){
-        if(dealerTop>=3 && dealerTop<=6){
+      if (handVal === 17) {
+        if (dealerTop >= 3 && dealerTop <= 6) {
           return 2;
         }
         return 1;
       }
-      if(handVal===16 || handval===15){
-        if(dealerTop>=4 && dealerTop<=6){
+      if (handVal === 16 || handval === 15) {
+        if (dealerTop >= 4 && dealerTop <= 6) {
           return 2;
         }
         return 1;
       }
-      if(handVal===14 || handval===13){
-        if(dealerTop===5 || dealerTop===6){
+      if (handVal === 14 || handval === 13) {
+        if (dealerTop === 5 || dealerTop === 6) {
           return 2;
         }
         return 1;
       }
     }
 
-    if(handVal===17){
+    if (handVal === 17) {
       return 0;
     }
-    if(handVal>=13&&handVal<=16){
-      if(dealerTop>=2 && dealerTop<=6){
+    if (handVal >= 13 && handVal <= 16) {
+      if (dealerTop >= 2 && dealerTop <= 6) {
         return 0;
       }
       return 1;
     }
-    if(handVal===12){
-      if(dealerTop>=4 && dealerTop<=6){
+    if (handVal === 12) {
+      if (dealerTop >= 4 && dealerTop <= 6) {
         return 0;
       }
       return 1;
     }
-    if(handVal===11){
-      if(dealerTop>=2&&dealerTop<=10){
+    if (handVal === 11) {
+      if (dealerTop >= 2 && dealerTop <= 10) {
         return 2;
       }
       return 1;
     }
-    if(handVal===10){
-      if(dealerTop>=2 && dealerTop<=9){
+    if (handVal === 10) {
+      if (dealerTop >= 2 && dealerTop <= 9) {
         return 2;
       }
       return 1;
