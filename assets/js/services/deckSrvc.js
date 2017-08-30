@@ -18,9 +18,12 @@ app.service('deckSrvc',function(){
       deck.push(temp.splice(Math.random()*temp.length,1)[0]);
     }
     count=0;
-  }
+  };
 
   this.draw=function(){
+    if(deck.length===0){
+      this.shuffle();
+    }
     toRet=deck.pop();
     let temp=toRet%13;
     if(toRet>=1 && toRet<=5){

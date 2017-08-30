@@ -1,5 +1,10 @@
 # cardCounting
 
+8/30, 00:24
+Made deck shuffle before dealing any cards
+Displaying cards on the freestyle controller
+
+
 8/29, 17:19
 Added dealer into the game. Adding chart moves to check on compliance.
 Added function documentation to gameSrvc

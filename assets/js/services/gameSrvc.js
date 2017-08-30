@@ -27,6 +27,7 @@ app.service('gameSrvc', function(deckSrvc) {
   canSplit
   totalValue(cards)
   isSoft(cards)
+  getNumberAndSuit(card)
   chartMove
     returns:
       0: stand
@@ -47,8 +48,20 @@ app.service('gameSrvc', function(deckSrvc) {
     this.blackjack = false;
   }
 
+  this.setBet=function(player, bet){
+    if(m_players.length<=player){
+      console.log("Attempted to set a bet outside of the player array");
+      return;
+    }
+    if(m_players)
+    m_players[player].bet=bet;
+  }
+
   this.addPlayer = function(name, money) {
     m_players.push(new Player(name, money, m_players.length));
+    if(m_players.length>1){
+      m_players[m_players.length-1].bet=500;
+    }
   }
 
   this.getPlayers = function() {
@@ -62,7 +75,7 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   function resetPlayer(aPlayer) {
-    this.cards = [
+    aPlayer.cards = [
       []
     ];
     this.currentHand = 0;
@@ -77,6 +90,7 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   this.deal = function() {
+
     m_dealerHand = [];
     if (deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) {
       deckSrvc.shuffle();
@@ -103,6 +117,10 @@ app.service('gameSrvc', function(deckSrvc) {
 
 
     m_currentPlayer = 0;
+  }
+
+  this.getNumberAndSuit=function(card){
+    return [card%13+1,Math.floor(card%13)];
   }
 
   this.dealerTopCard = function() {
@@ -273,8 +291,17 @@ app.service('gameSrvc', function(deckSrvc) {
 
   function prescreen(caller) {
     caller = caller.toUpperCase();
+
     if (m_currentPlayer >= m_players.length) {
       console.log("error in gameSrvc, trying to " + caller + " on an out-of-index player");
+      return false;
+    }
+    if(m_players[m_currentPlayer].cards.length===0){
+      console.log(`No cards array ${caller}`);
+      return false;
+    }
+    if(m_players[m_currentPlayer].cards[0].length==0){
+      console.log(`no hand is dealt ${caller}`);
       return false;
     }
     if (m_players[m_currentPlayer].bet <= 0) {
@@ -286,7 +313,7 @@ app.service('gameSrvc', function(deckSrvc) {
       return false;
     }
     if (total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]) >= 21) {
-      console.console.log("gamesrvc: player allowed to " + caller + " when at or over 21");
+      console.log("gamesrvc: player allowed to " + caller + " when at or over 21");
       return false;
     }
     return true;
