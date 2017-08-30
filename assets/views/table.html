@@ -11,6 +11,8 @@
       <input type="text" ng-model="player.bet">
       <button type="button" ng-click="hit()" ng-show="canHit">Hit</button>
       <button type="button" ng-click="stand()" ng-show="canStand">Stand</button>
+      <button type="button" ng-click="double()" ng-show="canDouble">Double</button>
+      <button type="button" ng-click="split()" ng-show="canSplit">Split</button>
     </ul>
     {{player.humanCards}}
   </div>

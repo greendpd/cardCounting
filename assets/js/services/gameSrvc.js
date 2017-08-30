@@ -92,6 +92,9 @@ app.service('gameSrvc', function(deckSrvc) {
     aPlayer.cards = [
       []
     ];
+    aPlayer.humanCards = [
+      []
+    ];
     aPlayer.currentHand = 0;
     aPlayer.blackjack = false;
   }
@@ -116,8 +119,8 @@ app.service('gameSrvc', function(deckSrvc) {
         console.log("Can't deal if player makes no bet");
         return;
       }
-      addCard(deckSrvc.draw(),current);
-      addCard(deckSrvc.draw(),current);
+      addCard(deckSrvc.draw(), current);
+      addCard(deckSrvc.draw(), current);
       if (total(current.cards[0]) === 21) {
         current.blackjack = true;
       }
@@ -190,7 +193,7 @@ app.service('gameSrvc', function(deckSrvc) {
     let newHand = [];
     newHand.push(currentHand.splice(1, 1));
     currPlayer.cards.push(newHand);
-    currPlayer.humanCards.push(currPlayer.humanCards[currPlayer.currentHand].splice(1,1));
+    currPlayer.humanCards.push(currPlayer.humanCards[currPlayer.currentHand].splice(1, 1));
   }
 
   this.canStand = function(playerNumber) {

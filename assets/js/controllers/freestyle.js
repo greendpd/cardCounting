@@ -13,18 +13,8 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
     $scope.canHit=gameSrvc.canHit(0);
     $scope.canDouble=gameSrvc.canDouble(0);
     $scope.canSplit=gameSrvc.canSplit(0);
-    $scope.cards=[];
-
-    // $scope.players.forEach((current,playerIndex)=>{
-    //   $scope.cards.push([]);
-    //   current.cards.forEach((hand,handIndex)=>{
-    //     $scope.cards[playerIndex].push([]);
-    //     hand.forEach((aCard,cardIndex)=>{
-    //       $scope.cards[playerIndex][handIndex].push(gameSrvc.getCardValue(aCard));
-    //     })
-    //   })
-    // })
   }
+
   updateButtons();
 
   $scope.deal=function(){
@@ -37,6 +27,16 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
   }
   $scope.stand=function(){
     gameSrvc.stand();
+    updateButtons();
+  }
+
+  $scope.double=function(){
+    gameSrvc.double();
+    updateButtons();
+  }
+
+  $scope.split=function(){
+    gameSrvc.split();
     updateButtons();
   }
 
