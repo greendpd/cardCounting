@@ -1,4 +1,8 @@
 # cardCounting
+8/30, 04:03
+Corrected cardValue function in gameSrvc
+Can no longer keep standing
+
 8/30, 03:44
 Bet values are added and subtracted correctly
 Need to update game end so that you can't keep standing...

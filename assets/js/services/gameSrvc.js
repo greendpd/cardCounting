@@ -4,6 +4,7 @@ app.service('gameSrvc', function(deckSrvc) {
   let m_players = [];
   let m_dealerHand = [];
   let m_currentPlayer = 0;
+  let gameLive=false;
   const MINREMAININGPERPLAYER = 5;
 
   /*
@@ -117,6 +118,7 @@ app.service('gameSrvc', function(deckSrvc) {
 
 
     m_currentPlayer = 0;
+    gameLive=true;
   }
 
   this.getNumberAndSuit = function(card) {
@@ -177,7 +179,14 @@ app.service('gameSrvc', function(deckSrvc) {
     currPlayer.cards.push(newHand);
   }
 
+  this.canStand=function(){
+    return gameLive;
+  }
+
   this.canHit = function() {
+    if(!gameLive){
+      return false;
+    }
     if (m_currentPlayer >= m_players.length) {
       return false;
     }
@@ -185,6 +194,9 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   this.canDouble = function() { //No doubling after a split
+    if(!gameLive){
+      return false;
+    }
     if (m_currentPlayer >= m_players.length) {
       return false;
     }
@@ -192,6 +204,9 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   this.canSplit = function() {
+    if(!gameLive){
+      return false;
+    }
     if (m_currentPlayer >= m_players.length) {
       return false;
     }
@@ -230,7 +245,7 @@ app.service('gameSrvc', function(deckSrvc) {
 
   function cardValue(card) {
     toRet = card % 13 + 1;
-    if (card > 10) {
+    if (toRet > 10) {
       return 10;
     }
     return toRet;
@@ -310,6 +325,7 @@ app.service('gameSrvc', function(deckSrvc) {
         })
       }
     })
+    gameLive=false;
 
   }
 

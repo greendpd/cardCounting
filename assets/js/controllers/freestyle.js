@@ -9,6 +9,7 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
 
   function updateButtons(){ //~~~need to add it so it is player specific
                             //If it's not human, then run the chart
+    $scope.canStand=gameSrvc.canStand();
     $scope.canHit=gameSrvc.canHit();
     $scope.canDouble=gameSrvc.canDouble();
     $scope.canSplit=gameSrvc.canSplit();
