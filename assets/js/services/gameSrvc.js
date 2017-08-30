@@ -143,7 +143,7 @@ app.service('gameSrvc', function(deckSrvc) {
     m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand].push(deckSrvc.draw());
     let toRet = total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
     if (toRet >= 21) {
-      incrementPlayer;
+      incrementPlayer();
     }
     return toRet;
   }
