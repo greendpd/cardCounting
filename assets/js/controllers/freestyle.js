@@ -7,7 +7,7 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
 
   $scope.players=gameSrvc.getPlayers();
 
-  function updateButtons(){ 
+  function updateButtons(){
                             //If it's not human, then run the chart
     $scope.canStand=gameSrvc.canStand(0);
     $scope.canHit=gameSrvc.canHit(0);

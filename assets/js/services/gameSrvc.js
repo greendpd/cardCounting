@@ -12,18 +12,17 @@ app.service('gameSrvc', function(deckSrvc) {
   ---Outward Facing Functions:
   addPlayer(name, money)
   getPlayers()
-    Unformatted cards
   removePlayer
     pops
   changeNumDecks(newNum)
   deal()
-  dealerTopCard()
-    This is unformatted, could be 51, could be 0
+  humanDealerCard
   getCurrentPlayer--returns index
   hit
   stand
   double
   split
+  canStand
   canHit
   canDouble
   canSplit
@@ -61,15 +60,6 @@ app.service('gameSrvc', function(deckSrvc) {
     }
     player.cards[0].push(card);
     player.humanCards[0].push(makeHuman(card));
-  }
-
-  this.setBet = function(player, bet) {
-    if (m_players.length <= player) {
-      console.log("Attempted to set a bet outside of the player array");
-      return;
-    }
-    if (m_players)
-      m_players[player].bet = bet;
   }
 
   this.addPlayer = function(name, money) {
@@ -462,7 +452,7 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   this.getChartMove = function() {
-    //~~~
+    return chartMove();
   }
 
   function chartMove() {
