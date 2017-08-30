@@ -5,6 +5,7 @@ app.service('gameSrvc', function(deckSrvc) {
   let m_dealerHand = [];
   let m_currentPlayer = 0;
   let gameLive = false;
+  let m_humanDone=false;
   const MINREMAININGPERPLAYER = 5;
 
   /*
@@ -107,7 +108,7 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   this.deal = function() {
-
+    m_humanDone=false;
     m_dealerHand = [];
     if (deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) {
       deckSrvc.shuffle();
@@ -141,17 +142,26 @@ app.service('gameSrvc', function(deckSrvc) {
     return [card % 13 + 1, Math.floor(card % 13)];
   }
 
-  this.dealerTopCard = function() {
+  function dealerTopCard() {
     if (m_dealerHand.length > 0) {
       return m_dealerHand[0];
     }
+  }
+
+  this.humanDealerCard = function() {
+    let temp = dealerTopCard();
+    return [temp % 13 + 1, Math.floor(temp / 13)];
   }
 
   this.getCurrentPlayer = function() {
     return m_currentPlayer;
   }
 
-  this.hit = function() {
+  this.hit=function(){
+    hit();
+  }
+
+  function hit() {
     if (!prescreen("HIT")) {
       return;
     }
@@ -164,15 +174,23 @@ app.service('gameSrvc', function(deckSrvc) {
     return toRet;
   }
 
-  this.stand = function() {
+  function stand() {
     incrementPlayer();
   }
 
-  this.double = function() {
+  this.stand=function(){
+    stand();
+  }
+
+  this.double=function(){
+    double();
+  }
+
+  function double() {
     if (!prescreen("DOUBLE")) {
       return;
     }
-    if (!this.canDouble()) { //remember, not allowing doubling on split hands!
+    if (!canDouble()) { //remember, not allowing doubling on split hands!
       console.log("attempted to double when not allowed");
       return;
     }
@@ -183,25 +201,31 @@ app.service('gameSrvc', function(deckSrvc) {
     incrementPlayer();
   }
 
-  this.split = function() {
+  function split () {
     prescreen("SPLIT");
-    if (!this.canSplit()) {
+    if (!canSplit()) {
       return "Allowed split when not allowed";
     }
     let currPlayer = m_players[m_currentPlayer];
     let currentHand = currPlayer.cards[currPlayer.currentHand];
-    let newHand = [];
-    newHand.push(currentHand.splice(1, 1));
-    currPlayer.cards.push(newHand);
+    currPlayer.cards.push(currentHand.splice(1, 1));
     currPlayer.humanCards.push(currPlayer.humanCards[currPlayer.currentHand].splice(1, 1));
   }
 
-  this.canStand = function(playerNumber) {
+  this.split =function(){
+    split();
+  }
+
+  function canStand (playerNumber) {
 
     if (playerNumber !== undefined && m_currentPlayer != playerNumber) {
       return false;
     }
     return gameLive;
+  }
+
+  this.canStand = function(playerNumber){
+    return canStand(playerNumber);
   }
 
   this.canHit = function(playerNumber) {
@@ -219,6 +243,10 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   this.canDouble = function(playerNumber) { //No doubling after a split
+    return canDouble(playerNumber);
+  }
+
+  function canDouble(playerNumber) {
     if (playerNumber !== undefined && m_currentPlayer != playerNumber) {
       return false;
     }
@@ -233,6 +261,10 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   this.canSplit = function(playerNumber) {
+    return canSplit(playerNumber);
+  }
+
+  function canSplit(playerNumber) {
     if (playerNumber !== undefined && m_currentPlayer != playerNumber) {
       return false;
     }
@@ -248,6 +280,7 @@ app.service('gameSrvc', function(deckSrvc) {
     if (currentHand.length != 2) {
       return false;
     }
+
     if (cardValue(currentHand[0]) !== cardValue(currentHand[1])) {
       return false;
     }
@@ -271,8 +304,33 @@ app.service('gameSrvc', function(deckSrvc) {
     } else {
       m_currentPlayer++;
     }
+
     if (m_currentPlayer === m_players.length) {
       resolveGame();
+    }
+
+    if (m_currentPlayer != 0 && !m_humanDone) {
+      m_humanDone=true;
+      runHandWithComputer();
+    }
+  }
+
+  function runHandWithComputer() {
+    //The way this will play out will be pretty convoluted:
+    //if it stands, then stand will call increment, which will then call this function
+    let currHand = m_players[m_currentPlayer].currentHand;
+    while (gameLive) {
+      let temp = chartMove();
+      if (temp === 0) {
+        stand();
+      } else if (temp === 1) {
+        hit();
+      } else if (temp === 2) {
+        double();
+      } else if (temp === 3) {
+        split();
+
+      }
     }
   }
 
@@ -308,7 +366,11 @@ app.service('gameSrvc', function(deckSrvc) {
     return total(cards);
   }
 
-  this.isSoft = function(cards) {
+  this.isHandSoft = function(cards) {
+    return isSoft(cards);
+  }
+
+  function isSoft(cards) {
     let hasAce = false;
     let total = 0;
     cards.forEach(function(cur, i, arr) {
@@ -328,6 +390,7 @@ app.service('gameSrvc', function(deckSrvc) {
     if (!gameLive) {
       console.log("trying to resolve on a not-live game");
     }
+    gameLive=false;
 
     let dealerTotal = total(m_dealerHand)
     if (m_dealerHand.length == 2 && dealerTotal == 21) {
@@ -366,8 +429,6 @@ app.service('gameSrvc', function(deckSrvc) {
         })
       }
     })
-    gameLive = false;
-
   }
 
   function prescreen(caller) {
@@ -400,22 +461,30 @@ app.service('gameSrvc', function(deckSrvc) {
     return true;
   }
 
-  this.chartMove = function() {
+  this.getChartMove = function() {
+    //~~~
+  }
+
+  function chartMove() {
     //0:stand
     //1:hit
     //2:double
     //3:stand
+    if (m_currentPlayer >= m_players.length) {
+      console.log("chartMove called outside of player index");
+      return;
+    }
     let hand = m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand];
     let handVal = total(hand);
     let soft = isSoft(hand);
-    let canDouble = this.canDouble();
-    let canSplit = this.canSplit();
+    let playerCanDouble = canDouble();
+    let playerCanSplit = canSplit();
     let dealerTop = cardValue(dealerTopCard())
     if (handVal >= 19) {
       return 0;
     }
 
-    if (canSplit) { //need to handle this first, so we don't find soft 16 doing it's stuff...
+    if (canSplit()) { //need to handle this first, so we don't find soft 16 doing it's stuff...
       let myCard = cardValue(hand[0]);
       if (myCard === 1 || myCard === 8) {
         return 3;
@@ -477,7 +546,7 @@ app.service('gameSrvc', function(deckSrvc) {
         }
         return 1;
       }
-      if (handVal === 16 || handval === 15) {
+      if (handVal === 16 || handVal === 15) {
         if (dealerTop >= 4 && dealerTop <= 6) {
           return 2;
         }

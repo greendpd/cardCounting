@@ -7,7 +7,7 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
 
   $scope.players=gameSrvc.getPlayers();
 
-  function updateButtons(){ //~~~need to add it so it is player specific
+  function updateButtons(){ 
                             //If it's not human, then run the chart
     $scope.canStand=gameSrvc.canStand(0);
     $scope.canHit=gameSrvc.canHit(0);
@@ -19,6 +19,7 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
 
   $scope.deal=function(){
     gameSrvc.deal();
+    $scope.dealerTop=gameSrvc.humanDealerCard();
     updateButtons();
   }
   $scope.hit=function(){
