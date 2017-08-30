@@ -9,11 +9,21 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
 
   function updateButtons(){ //~~~need to add it so it is player specific
                             //If it's not human, then run the chart
-    $scope.canStand=gameSrvc.canStand();
-    $scope.canHit=gameSrvc.canHit();
-    $scope.canDouble=gameSrvc.canDouble();
-    $scope.canSplit=gameSrvc.canSplit();
+    $scope.canStand=gameSrvc.canStand(0);
+    $scope.canHit=gameSrvc.canHit(0);
+    $scope.canDouble=gameSrvc.canDouble(0);
+    $scope.canSplit=gameSrvc.canSplit(0);
+    $scope.cards=[];
 
+    // $scope.players.forEach((current,playerIndex)=>{
+    //   $scope.cards.push([]);
+    //   current.cards.forEach((hand,handIndex)=>{
+    //     $scope.cards[playerIndex].push([]);
+    //     hand.forEach((aCard,cardIndex)=>{
+    //       $scope.cards[playerIndex][handIndex].push(gameSrvc.getCardValue(aCard));
+    //     })
+    //   })
+    // })
   }
   updateButtons();
 
@@ -23,7 +33,7 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
   }
   $scope.hit=function(){
     gameSrvc.hit();
-    $scope.canHit=gameSrvc.canHit();
+    updateButtons();
   }
   $scope.stand=function(){
     gameSrvc.stand();

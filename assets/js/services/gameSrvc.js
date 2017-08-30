@@ -4,7 +4,7 @@ app.service('gameSrvc', function(deckSrvc) {
   let m_players = [];
   let m_dealerHand = [];
   let m_currentPlayer = 0;
-  let gameLive=false;
+  let gameLive = false;
   const MINREMAININGPERPLAYER = 5;
 
   /*
@@ -45,8 +45,21 @@ app.service('gameSrvc', function(deckSrvc) {
     this.cards = [
       []
     ];
+    this.humanCards = [
+      []
+    ];
     this.currentHand = 0;
     this.blackjack = false;
+  }
+
+  function addCard(card, player) {
+    if (player === undefined) {
+      m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand].push(card);
+      m_players[m_currentPlayer].humanCards[m_players[m_currentPlayer].currentHand].push(makeHuman(card));
+      return;
+    }
+    player.cards[0].push(card);
+    player.humanCards[0].push(makeHuman(card));
   }
 
   this.setBet = function(player, bet) {
@@ -103,12 +116,13 @@ app.service('gameSrvc', function(deckSrvc) {
         console.log("Can't deal if player makes no bet");
         return;
       }
-      current.cards[0].push(deckSrvc.draw())
-      current.cards[0].push(deckSrvc.draw())
+      addCard(deckSrvc.draw(),current);
+      addCard(deckSrvc.draw(),current);
       if (total(current.cards[0]) === 21) {
         current.blackjack = true;
       }
     }
+    gameLive = true;
 
     m_dealerHand.push(deckSrvc.draw());
     m_dealerHand.push(deckSrvc.draw());
@@ -118,7 +132,6 @@ app.service('gameSrvc', function(deckSrvc) {
 
 
     m_currentPlayer = 0;
-    gameLive=true;
   }
 
   this.getNumberAndSuit = function(card) {
@@ -140,7 +153,7 @@ app.service('gameSrvc', function(deckSrvc) {
       return;
     }
 
-    m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand].push(deckSrvc.draw());
+    addCard(deckSrvc.draw());
     let toRet = total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
     if (toRet >= 21) {
       incrementPlayer();
@@ -162,7 +175,7 @@ app.service('gameSrvc', function(deckSrvc) {
     }
     m_players[m_currentPlayer].bet *= 2;
 
-    m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand].push(deckSrvc.draw());
+    addCard(deckSrvc.draw());
     let toRet = total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
     incrementPlayer();
   }
@@ -177,14 +190,23 @@ app.service('gameSrvc', function(deckSrvc) {
     let newHand = [];
     newHand.push(currentHand.splice(1, 1));
     currPlayer.cards.push(newHand);
+    currPlayer.humanCards.push(currPlayer.humanCards[currPlayer.currentHand].splice(1,1));
   }
 
-  this.canStand=function(){
+  this.canStand = function(playerNumber) {
+
+    if (playerNumber !== undefined && m_currentPlayer != playerNumber) {
+      return false;
+    }
     return gameLive;
   }
 
-  this.canHit = function() {
-    if(!gameLive){
+  this.canHit = function(playerNumber) {
+    if (playerNumber !== undefined && m_currentPlayer != playerNumber) {
+      return false;
+    }
+
+    if (!gameLive) {
       return false;
     }
     if (m_currentPlayer >= m_players.length) {
@@ -193,8 +215,12 @@ app.service('gameSrvc', function(deckSrvc) {
     return (total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]) < 21)
   }
 
-  this.canDouble = function() { //No doubling after a split
-    if(!gameLive){
+  this.canDouble = function(playerNumber) { //No doubling after a split
+    if (playerNumber !== undefined && m_currentPlayer != playerNumber) {
+      return false;
+    }
+
+    if (!gameLive) {
       return false;
     }
     if (m_currentPlayer >= m_players.length) {
@@ -203,8 +229,12 @@ app.service('gameSrvc', function(deckSrvc) {
     return (m_players[m_currentPlayer].money >= m_players[m_currentPlayer].bet * 2 && m_players[m_currentPlayer].cards.length === 1);
   }
 
-  this.canSplit = function() {
-    if(!gameLive){
+  this.canSplit = function(playerNumber) {
+    if (playerNumber !== undefined && m_currentPlayer != playerNumber) {
+      return false;
+    }
+
+    if (!gameLive) {
       return false;
     }
     if (m_currentPlayer >= m_players.length) {
@@ -238,7 +268,7 @@ app.service('gameSrvc', function(deckSrvc) {
     } else {
       m_currentPlayer++;
     }
-    if(m_currentPlayer===m_players.length){
+    if (m_currentPlayer === m_players.length) {
       resolveGame();
     }
   }
@@ -267,6 +297,10 @@ app.service('gameSrvc', function(deckSrvc) {
     return total;
   }
 
+  function makeHuman(card) {
+    return [card % 13 + 1, Math.floor(card / 13)];
+  }
+
   this.totalValue = function(cards) {
     return total(cards);
   }
@@ -288,6 +322,10 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   function resolveGame() {
+    if (!gameLive) {
+      console.log("trying to resolve on a not-live game");
+    }
+
     let dealerTotal = total(m_dealerHand)
     if (m_dealerHand.length == 2 && dealerTotal == 21) {
       m_players.forEach(function(cur, i, arr) {
@@ -309,11 +347,11 @@ app.service('gameSrvc', function(deckSrvc) {
         cur.money += Number(cur.bet) * 1.5;
       } else {
         cur.cards.forEach((hand) => {
-          console.log(cur.name+": Card value: "+total(hand));
-          console.log("\tBet: "+cur.bet);
+          console.log(cur.name + ": Card value: " + total(hand));
+          console.log("\tBet: " + cur.bet);
           if (total(hand) > 21) {
             console.log("OVER");
-            cur.money -=Number(cur.bet);
+            cur.money -= Number(cur.bet);
             console.log(cur.money);
           } else if (dealerTotal > 21) {
             cur.money += Number(cur.bet);
@@ -325,7 +363,7 @@ app.service('gameSrvc', function(deckSrvc) {
         })
       }
     })
-    gameLive=false;
+    gameLive = false;
 
   }
 
