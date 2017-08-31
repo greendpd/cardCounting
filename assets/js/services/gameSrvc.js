@@ -413,7 +413,7 @@ app.service('gameSrvc', function(deckSrvc,$http) {
       })
       return;
     }
-
+    //Currently NOT calling to DB on dealer blackjacks, instead going to put in a certain pecentage of the games as being dealer blackjacks
     putHandToDB();
 
     while (total(m_dealerHand) < 17) {
