@@ -1,6 +1,8 @@
 let express=require('express');
 let massive=require('massive');
 let config=require('./config');
+let session = require('express-session');
+let endpoints=require('./server/endpoints.js')
 const {json}=require('body-parser');
 
 let port=config.port || 3001;
@@ -8,8 +10,16 @@ let port=config.port || 3001;
 
 let app=express();
 
-
 app.use(json());
+
+app.use(session({
+  secret:config.secret,
+  saveUninitialized:false,
+  resave:false
+}))
+
+
+
 
 massive({
   host:'127.0.0.1',
@@ -50,16 +60,7 @@ app.post('/api/test',(req,res)=>{
     .catch(err=>res.status(500).json(err));
 })
 
-app.post('/api/addHand',(req,res)=>{
-  const {bet, count, followedChart}=req.body;
-  console.log("Here we are!!!");
-  console.log(`Bet: ${bet}`);
-  console.log(`count: ${count}`);
-  console.log(`Followed: ${followedChart}`);
-  console.log();
-  res.status(200).json("DONE!!!")
-
-})
+app.post('/api/addHand',endpoints.addHand)
 //
 // app.get('/api/beta/:id',(req,res)=>{
 //   console.log(req.query)
