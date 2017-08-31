@@ -26,10 +26,10 @@ app.service('deckSrvc',function(){
     }
     toRet=deck.pop();
     let temp=toRet%13;
-    if(toRet>=1 && toRet<=5){
+    if(temp>=1 && temp<=5){
       count++;
     }
-    if(toRet==0 || toRet>=9){
+    if(temp==0 || temp>=9){
       count--;
     }
     return toRet;
@@ -41,6 +41,10 @@ app.service('deckSrvc',function(){
 
   this.getCount=function(){
     return count/numDecks;
+  }
+
+  this.getAbsoluteCount=function(){
+    return count;
   }
 
   this.getNumDecks=function(){

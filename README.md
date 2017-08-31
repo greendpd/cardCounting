@@ -1,4 +1,11 @@
 # cardCounting
+8/31, 12:20
+Fixed bugs in gameSrvc
+Added a post-game call to server with game data
+Added an endpoint in server for game data
+Also added test endpoints that can be removed later, as well as test db files in db folder
+
+
 8/30, 04:03
 Corrected cardValue function in gameSrvc
 Can no longer keep standing

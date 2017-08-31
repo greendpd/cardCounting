@@ -1,4 +1,4 @@
-app.service('gameSrvc', function(deckSrvc) {
+app.service('gameSrvc', function(deckSrvc,$http) {
   let m_numPlayers = 0;
   let m_numDecks = 8;
   let m_players = [];
@@ -6,6 +6,7 @@ app.service('gameSrvc', function(deckSrvc) {
   let m_currentPlayer = 0;
   let gameLive = false;
   let m_humanDone=false;
+  let m_gameStartCount=0;
   const MINREMAININGPERPLAYER = 5;
 
   /*
@@ -50,6 +51,8 @@ app.service('gameSrvc', function(deckSrvc) {
     ];
     this.currentHand = 0;
     this.blackjack = false;
+    this.isDoubled=false;
+    this.followedChart=true;
   }
 
   function addCard(card, player) {
@@ -88,6 +91,11 @@ app.service('gameSrvc', function(deckSrvc) {
     ];
     aPlayer.currentHand = 0;
     aPlayer.blackjack = false;
+    if(aPlayer.isDoubled){
+      aPlayer.bet/=2;
+    }
+    aPlayer.isDoubled=false;
+    aPlayer.followedChart=true;
   }
 
   this.changeNumDecks = function(numDecks) {
@@ -103,6 +111,7 @@ app.service('gameSrvc', function(deckSrvc) {
     if (deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) {
       deckSrvc.shuffle();
     }
+    m_gameStartCount=deckSrvc.getAbsoluteCount();
 
     for (var current of m_players) {
       resetPlayer(current);
@@ -123,7 +132,6 @@ app.service('gameSrvc', function(deckSrvc) {
     if (total(m_dealerHand) === 21) { //If a blackjack, game's over!
       resolveGame();
     }
-
 
     m_currentPlayer = 0;
   }
@@ -155,6 +163,9 @@ app.service('gameSrvc', function(deckSrvc) {
     if (!prescreen("HIT")) {
       return;
     }
+    if(chartMove() !== 1){
+      m_players[m_currentPlayer].followedChart=false;
+    }
 
     addCard(deckSrvc.draw());
     let toRet = total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
@@ -165,6 +176,9 @@ app.service('gameSrvc', function(deckSrvc) {
   }
 
   function stand() {
+    if(chartMove() !== 0){
+      m_players[m_currentPlayer].followedChart=false;
+    }
     incrementPlayer();
   }
 
@@ -184,7 +198,12 @@ app.service('gameSrvc', function(deckSrvc) {
       console.log("attempted to double when not allowed");
       return;
     }
+    if(chartMove() !== 2){
+      m_players[m_currentPlayer].followedChart=false;
+    }
+
     m_players[m_currentPlayer].bet *= 2;
+    m_players[m_currentPlayer].isDoubled=true;
 
     addCard(deckSrvc.draw());
     let toRet = total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
@@ -195,6 +214,9 @@ app.service('gameSrvc', function(deckSrvc) {
     prescreen("SPLIT");
     if (!canSplit()) {
       return "Allowed split when not allowed";
+    }
+    if(chartMove() !== 3){
+      m_players[m_currentPlayer].followedChart=false;
     }
     let currPlayer = m_players[m_currentPlayer];
     let currentHand = currPlayer.cards[currPlayer.currentHand];
@@ -392,6 +414,8 @@ app.service('gameSrvc', function(deckSrvc) {
       return;
     }
 
+    putHandToDB();
+
     while (total(m_dealerHand) < 17) {
       m_dealerHand.push(deckSrvc.draw());
     }
@@ -455,6 +479,25 @@ app.service('gameSrvc', function(deckSrvc) {
     return chartMove();
   }
 
+  function putHandToDB(){
+    let theHuman=m_players[0];
+    let bet=theHuman.bet;
+    if(theHuman.isDoubled){
+      bet/=2;
+    }
+    let count=m_gameStartCount;
+    let followedChart=theHuman.followedChart;
+    $http({
+      method:"POST",
+      url:"/api/addHand",
+      data: {
+        bet:bet,
+        count:count,
+        followedChart:followedChart
+      }
+    })
+  }
+
   function chartMove() {
     //0:stand
     //1:hit
@@ -462,6 +505,10 @@ app.service('gameSrvc', function(deckSrvc) {
     //3:stand
     if (m_currentPlayer >= m_players.length) {
       console.log("chartMove called outside of player index");
+      return;
+    }
+    if(m_players[m_currentPlayer].cards.length<=m_players[m_currentPlayer].currentHand){
+      console.log("chartMove is being called on a non-existent hand for an existing player");
       return;
     }
     let hand = m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand];
@@ -542,7 +589,7 @@ app.service('gameSrvc', function(deckSrvc) {
         }
         return 1;
       }
-      if (handVal === 14 || handval === 13) {
+      if (handVal === 14 || handVal === 13) {
         if (dealerTop === 5 || dealerTop === 6) {
           return 2;
         }
@@ -550,7 +597,7 @@ app.service('gameSrvc', function(deckSrvc) {
       }
     }
 
-    if (handVal === 17) {
+    if (handVal >= 17) {
       return 0;
     }
     if (handVal >= 13 && handVal <= 16) {
