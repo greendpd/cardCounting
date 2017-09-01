@@ -1,4 +1,19 @@
 # cardCounting
+9/1, 16:05
+Got most endpoints working
+Need to check deleteHistory.sql to make sure that it will delete games, despite the foreign keys
+Removed bogus endpoints
+
+9/1, 13:58
+Got it to write the correct date into sql tables
+Still need to create the files in folder ./db
+
+
+9/1, 11:52
+Corrected so you can't double if dealt a blackjack
+Can still stand
+Need to update so if it's a blackjack, it automatically increments the player
+
 8/31, 12:20
 Fixed bugs in gameSrvc
 Added a post-game call to server with game data
