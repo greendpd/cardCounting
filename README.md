@@ -1,7 +1,9 @@
 # cardCounting
+
 9/1, 16:05
 Got most endpoints working
 Need to check deleteHistory.sql to make sure that it will delete games, despite the foreign keys
+  Looks like it deletes it correctly
 Removed bogus endpoints
 
 9/1, 13:58

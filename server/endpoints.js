@@ -39,7 +39,10 @@ module.exports = {
       database.postHand([gameNum, count, bet, followedChart]);
       res.status(200).json("success");
     }
+  },
 
+  getMoney:function(req,res){
+    database.getMoney([req.params.playerId]).then((response)=>res.status(200).json(response));
   },
 
   setMoney:function(req,res){
@@ -52,7 +55,7 @@ module.exports = {
   },
 
   deleteHistory:function(req,res){
-    database.deleteHistory([req.params.playerId]);
+    database.deleteHistory([req.params.playerId]).then((response)=>res.json(response));
   },
 
   setDB: function(db) {
