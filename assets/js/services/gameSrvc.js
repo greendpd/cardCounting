@@ -624,6 +624,11 @@ app.service('gameSrvc', function(deckSrvc,$http) {
       }
       return 1;
     }
+    if(handVal===9){
+      if(dealerTop>=3 &&dealerTop<=6){
+        return 2;
+      }
+    }
     return 1;
   }
 })
