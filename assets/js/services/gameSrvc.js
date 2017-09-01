@@ -269,6 +269,9 @@ app.service('gameSrvc', function(deckSrvc,$http) {
     if (m_currentPlayer >= m_players.length) {
       return false;
     }
+    if(total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]) >= 21){
+      return false;
+    }
     return (m_players[m_currentPlayer].money >= m_players[m_currentPlayer].bet * 2 && m_players[m_currentPlayer].cards.length === 1);
   }
 
