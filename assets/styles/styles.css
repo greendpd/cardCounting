@@ -1,0 +1,20 @@
+
+body{
+  background-color: red;
+}
+
+
+div.players-container{
+  color:white;
+  display: flex;
+  justify-content:space-between;
+  max-width:700px;
+}
+
+.resize-card{
+  /*position:absolute;*/
+  width:1250px;
+  height:auto;
+  position: 110px 130px;
+
+}

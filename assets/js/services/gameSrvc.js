@@ -116,7 +116,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     for (var current of m_players) {
       resetPlayer(current);
       if (current.bet <= 0) {
-        console.log("Can't deal if player makes no bet");
+        console.log(`Can't deal if player ${current.name} makes no bet`);
         return;
       }
       addCard(deckSrvc.draw(), current);

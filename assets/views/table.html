@@ -2,22 +2,36 @@
   table
   <p>{{test}}</p>
 
-  <div ng-repeat="player in players">
-    <ul>
-      <li>Name: {{player.name}}</li>
-      <li>Cash: {{player.money}}</li>
-      <li>Bet: {{player.bet}}</li>
-      <li>Cards: {{player.cards}}</li>
-      <input type="text" ng-model="player.bet">
-      <button type="button" ng-click="hit()" ng-show="canHit">Hit</button>
-      <button type="button" ng-click="stand()" ng-show="canStand">Stand</button>
-      <button type="button" ng-click="double()" ng-show="canDouble">Double</button>
-      <button type="button" ng-click="split()" ng-show="canSplit">Split</button>
-    </ul>
-    {{player.humanCards}}
-  </div>
-  <button type="button" ng-click="deal()">DEAL!!!</button>
-  <div class="">  </div>
   {{dealerTop}}
+  <div class="players-container">
+
+    <div class="player" ng-repeat="player in players">
+      <ul>
+        <li>Name: {{player.name}}</li>
+        <li>Cash: {{player.money}}</li>
+        <li>Bet: {{player.bet}}</li>
+      </ul>
+      <!-- <div style='height:{{height}};width:100px;overflow:hidden;'>
+        <img class='resize-card' ng-src="../images/cards.svg">
+      </div> -->
+      {{testHeader}}
+      {{player.humanCards}}
+      <div class="players-container">
+        <!-- <img style="width:214px; height:120px;background:url('../images/cards.svg') -38px 0px;background-size:3000px auto;"> -->
+        <img style="{{theStyle}}">
+      </div>
+    </div>
+  </div>
+  <div class="">
+    <input type="text" ng-model="human.bet">
+  </div>
+
+  <button type="button" ng-click="hit()" ng-show="canHit">Hit</button>
+  <button type="button" ng-click="stand()" ng-show="canStand">Stand</button>
+  <button type="button" ng-click="double()" ng-show="canDouble">Double</button>
+  <button type="button" ng-click="split()" ng-show="canSplit">Split</button>
+  <div class="">
+    <button type="button" ng-click="deal()">DEAL!!!</button>
+  </div>
 
 </section>
