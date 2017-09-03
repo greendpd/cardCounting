@@ -69,6 +69,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     this.isDoubled = false;
     this.followedChart = true;
     this.styles = [];
+    this.total=[];
   }
 
   function addCard(card, player) {
@@ -171,6 +172,9 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     }
 
     m_currentPlayer = 0;
+    if(m_players[0].blackjack){ //Hard-coding since only one human
+      incrementPlayer();
+    }
   }
 
   this.getNumberAndSuit = function(card) {

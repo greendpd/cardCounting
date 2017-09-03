@@ -3,8 +3,6 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
 
   let dealerTop=-1;
 
-  $scope.test="Freestyle table";
-
 
   gameSrvc.addPlayer('David',10000);
   gameSrvc.addPlayer('Comp1',10000);

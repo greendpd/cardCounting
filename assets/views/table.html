@@ -1,9 +1,11 @@
 <section>
   table
-  <p>{{test}}</p>
+  <div style="display:flex">
 
-  <div ng-repeat="style in dealerStyles track by $index">
-    <img style="{{style}}">
+
+    <div ng-repeat="style in dealerStyles track by $index">
+      <img style="{{style}}">
+    </div>
   </div>
   <img style="{{dealerTopStyle}}">
   <div class="players-container">
@@ -14,11 +16,8 @@
         <li>Cash: {{player.money}}</li>
         <li>Bet: {{player.bet}}</li>
       </ul>
-      <!-- <div style='height:{{height}};width:100px;overflow:hidden;'>
-        <img class='resize-card' ng-src="../images/cards.svg">
-      </div> -->
-      {{testHeader}}
-      <div ng-repeat="handStyles in player.styles track by $index">
+
+      <div style="display:flex" ng-repeat="handStyles in player.styles track by $index">
         <div ng-repeat="card in handStyles track by $index">
             <img style="{{card}}">
         </div>
