@@ -9,6 +9,17 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   let m_gameStartCount = 0;
   const MINREMAININGPERPLAYER = 5;
 
+  //For styling
+  const TOTALSIZE=1000;
+  let s_cardWidth=Math.floor(TOTALSIZE/14.01);
+  let s_initialWidthOffset=Math.floor(TOTALSIZE/136.35);
+  let s_initialHeightOffset=Math.floor(TOTALSIZE/176.46);
+  let s_spaceBetweenCards=Math.floor(TOTALSIZE/187.4);
+  let s_cardHeight=Math.floor(TOTALSIZE/9.374);
+  let s_spaceHeightBetween=Math.floor(TOTALSIZE/176.46)
+  let s_borderRadius=Math.floor(TOTALSIZE/176.46)
+  let s_minWidth=Math.floor(TOTALSIZE/125);
+
   /*
   ---Outward Facing Functions:
   addPlayer(name, money)
@@ -18,6 +29,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   changeNumDecks(newNum)
   deal()
   humanDealerCard
+  getDealerTopStyle(card)
   getCurrentPlayer--returns index
   hit
   stand
@@ -53,16 +65,19 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     this.blackjack = false;
     this.isDoubled = false;
     this.followedChart = true;
+    this.styles = [];
   }
 
   function addCard(card, player) {
     if (player === undefined) {
       m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand].push(card);
       m_players[m_currentPlayer].humanCards[m_players[m_currentPlayer].currentHand].push(makeHuman(card));
+      m_players[m_currentPlayer].styles[m_players[m_currentPlayer].currentHand].push(setStyle(card));
       return;
     }
     player.cards[0].push(card);
     player.humanCards[0].push(makeHuman(card));
+    player.styles[0].push(setStyle(card));
   }
 
   this.addPlayer = function(name, money) {
@@ -82,6 +97,17 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     } else(m_players.pop());
   }
 
+  function setStyle(card){
+    //Returns the style that is appropriate for the card
+    let cardNum=card%13
+    let suit=Math.floor(card/13);
+    return `width:${s_cardWidth}px; height:${s_cardHeight}px; background:url('../images/cards.svg') -${s_initialWidthOffset+cardNum*(s_spaceBetweenCards+s_cardWidth)}px -${s_initialHeightOffset+suit*(s_spaceHeightBetween+s_cardHeight)}px;background-size:${TOTALSIZE}px auto;border-radius:${s_borderRadius}px`
+  }
+
+  this.getDealerTopStyle=function(){
+    return setStyle(dealerTopCard());
+  }
+
   function resetPlayer(aPlayer) {
     aPlayer.cards = [
       []
@@ -96,6 +122,9 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     }
     aPlayer.isDoubled = false;
     aPlayer.followedChart = true;
+    aPlayer.styles = [
+      []
+    ];
   }
 
   this.changeNumDecks = function(numDecks) {
@@ -144,6 +173,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     if (m_dealerHand.length > 0) {
       return m_dealerHand[0];
     }
+    console.log("Attempted to get the dealer top card when none had been dealt");
   }
 
   this.humanDealerCard = function() {
@@ -222,6 +252,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     let currentHand = currPlayer.cards[currPlayer.currentHand];
     currPlayer.cards.push(currentHand.splice(1, 1));
     currPlayer.humanCards.push(currPlayer.humanCards[currPlayer.currentHand].splice(1, 1));
+    currPlayer.styles.push(currPlayer.styles[currPlayer.currentHand].splice(1,1));
   }
 
   this.split = function() {

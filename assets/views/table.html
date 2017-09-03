@@ -2,7 +2,7 @@
   table
   <p>{{test}}</p>
 
-  {{dealerTop}}
+  <img style="{{dealerTopStyle}}">
   <div class="players-container">
 
     <div class="player" ng-repeat="player in players">
@@ -15,7 +15,13 @@
         <img class='resize-card' ng-src="../images/cards.svg">
       </div> -->
       {{testHeader}}
-      {{player.humanCards}}
+      <div ng-repeat="handStyles in player.styles track by $index">
+        <div ng-repeat="card in handStyles track by $index">
+            <img style="{{card}}">
+        </div>
+        NEXT HAND!
+      </div>
+
       <div class="players-container">
         <!-- <img style="width:214px; height:120px;background:url('../images/cards.svg') -38px 0px;background-size:3000px auto;"> -->
         <img style="{{theStyle}}">
