@@ -52,6 +52,18 @@ app.service('gameSrvc', function(deckSrvc, $http) {
       2: double
       3: split
   */
+
+  this.clearAllPlayers=function(){
+      m_players=[];
+      m_currentPlayer=0;
+      m_dealerHand=[];
+      m_numPlayers=0;
+      gameLive=false;
+      m_humanDone=false;
+      m_gameStartCount=0;
+      m_dealerStyles=[];
+  }
+
   function Player(name, money, seat) {
     this.name = name;
     this.money = money;
@@ -68,8 +80,9 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     this.blackjack = false;
     this.isDoubled = false;
     this.followedChart = true;
-    this.styles = [];
+    this.styles = [[]];
     this.total=[];
+    this.soft=[];
   }
 
   function addCard(card, player) {
@@ -77,11 +90,20 @@ app.service('gameSrvc', function(deckSrvc, $http) {
       m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand].push(card);
       m_players[m_currentPlayer].humanCards[m_players[m_currentPlayer].currentHand].push(makeHuman(card));
       m_players[m_currentPlayer].styles[m_players[m_currentPlayer].currentHand].push(setStyle(card));
+      m_players[m_currentPlayer].total[m_players[m_currentPlayer].currentHand]=total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
+      m_players[m_currentPlayer].soft[m_players[m_currentPlayer].currentHand]=isSoft(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
       return;
     }
-    player.cards[0].push(card);
-    player.humanCards[0].push(makeHuman(card));
-    player.styles[0].push(setStyle(card));
+    player.cards[player.currentHand].push(card);
+    player.humanCards[player.currentHand].push(makeHuman(card));
+    player.styles[player.currentHand].push(setStyle(card));
+    if(player.total.length<=player.currentHand){
+      player.total.push(total(player.cards[0]));
+      player.soft.push(isSoft(player.cards[0]));
+    }else{
+      player.total[player.currentHand]=total(player.cards[player.currentHand]);
+      player.soft[player.currentHand]=isSoft(player.cards[player.currentHand]);
+    }
   }
 
   this.addPlayer = function(name, money) {
@@ -129,6 +151,8 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     aPlayer.styles = [
       []
     ];
+    aPlayer.total=[];
+    aPlayer.soft=[];
   }
 
   this.changeNumDecks = function(numDecks) {
@@ -265,6 +289,13 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     currPlayer.cards.push(currentHand.splice(1, 1));
     currPlayer.humanCards.push(currPlayer.humanCards[currPlayer.currentHand].splice(1, 1));
     currPlayer.styles.push(currPlayer.styles[currPlayer.currentHand].splice(1,1));
+    currPlayer.total=[];
+    currPlayer.soft=[];
+    currPlayer.cards.forEach((cur,i)=>{
+      currPlayer.total.push(total(cur));
+      currPlayer.soft.push(isSoft(cur));
+
+    })
   }
 
   this.split = function() {
