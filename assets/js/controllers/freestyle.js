@@ -1,55 +1,69 @@
-app.controller('freestyleCtrl',function($scope,gameSrvc){
-  const humanPlayerNum=0;
+app.controller('freestyleCtrl', function($scope, gameSrvc) {
+  const humanPlayerNum = 0;
 
-  $scope.canBet=true;
-  $scope.showBet=true;
-  $scope.canDeal=true;
+  $scope.canBet = true;
+  $scope.showBet = true;
+  $scope.canDeal = true;
 
-  let dealerTop=-1;
+  let dealerTop = -1;
   gameSrvc.clearAllPlayers();
 
-  gameSrvc.addPlayer('David',10000);
-  gameSrvc.addPlayer('Comp1',10000);
-  gameSrvc.addPlayer('Comp2',10000);
-  gameSrvc.addPlayer('Comp3',10000);
+  gameSrvc.addPlayer('David', 10000);
+  gameSrvc.addPlayer('Comp1', 10000);
+  gameSrvc.addPlayer('Comp2', 10000);
+  gameSrvc.addPlayer('Comp3', 10000);
 
 
-  $scope.players=gameSrvc.getPlayers();
-  $scope.human=$scope.players[humanPlayerNum];
+  $scope.players = gameSrvc.getPlayers();
+  $scope.human = $scope.players[humanPlayerNum];
 
-  function updateButtons(){
-    $scope.showStand=gameSrvc.canStand(humanPlayerNum);
-    $scope.showHit=gameSrvc.canHit(humanPlayerNum);
-    $scope.showDouble=gameSrvc.canDouble(humanPlayerNum);
-    $scope.showSplit=gameSrvc.canSplit(humanPlayerNum);
-    $scope.canBet=!gameSrvc.gameIsLive();
+  function updateButtons() {
+    if (!gameSrvc.gameIsLive()) {
+      if ($scope.human.wonGame===2) {
+        result = "Blackjack!"
+      } else if($scope.human.wonGame===1){
+          $scope.result = "You Won!!!";
+      } else if ($scope.human.wonGame===-1){
+        $scope.result = "House wins"
+      }else if($scope.human.wonGame===0){
+        $scope.result="Push";
+      }
+    } else {
+      result = "";
+    }
+    $scope.showStand = gameSrvc.canStand(humanPlayerNum);
+    $scope.showHit = gameSrvc.canHit(humanPlayerNum);
+    $scope.showDouble = gameSrvc.canDouble(humanPlayerNum);
+    $scope.showSplit = gameSrvc.canSplit(humanPlayerNum);
+    $scope.canBet = !gameSrvc.gameIsLive();
+
   }
 
   updateButtons();
 
-  $scope.deal=function(){
+  $scope.deal = function() {
     gameSrvc.deal();
-    $scope.dealerTop=gameSrvc.humanDealerCard();
-    $scope.dealerStyles=gameSrvc.getDealerStyles();
+    $scope.dealerTop = gameSrvc.humanDealerCard();
+    $scope.dealerStyles = gameSrvc.getDealerStyles();
 
 
     updateButtons();
   }
-  $scope.hit=function(){
+  $scope.hit = function() {
     gameSrvc.hit();
     updateButtons();
   }
-  $scope.stand=function(){
+  $scope.stand = function() {
     gameSrvc.stand();
     updateButtons();
   }
 
-  $scope.double=function(){
+  $scope.double = function() {
     gameSrvc.double();
     updateButtons();
   }
 
-  $scope.split=function(){
+  $scope.split = function() {
     gameSrvc.split();
     updateButtons();
   }

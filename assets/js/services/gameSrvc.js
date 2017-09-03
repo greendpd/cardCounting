@@ -1,5 +1,5 @@
 app.service('gameSrvc', function(deckSrvc, $http) {
-  const CARDBACK=56 //Represents the number that is the back of the cards
+  const CARDBACK = 56 //Represents the number that is the back of the cards
   let m_numPlayers = 0;
   let m_numDecks = 8;
   let m_players = [];
@@ -8,19 +8,19 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   let gameLive = false;
   let m_humanDone = false;
   let m_gameStartCount = 0;
-  let m_dealerStyles=[];
+  let m_dealerStyles = [];
   const MINREMAININGPERPLAYER = 5;
 
   //For styling
-  const TOTALSIZE=1000;
-  let s_cardWidth=Math.floor(TOTALSIZE/14.01);
-  let s_initialWidthOffset=Math.floor(TOTALSIZE/136.35);
-  let s_initialHeightOffset=Math.floor(TOTALSIZE/176.46);
-  let s_spaceBetweenCards=Math.floor(TOTALSIZE/187.4);
-  let s_cardHeight=Math.floor(TOTALSIZE/9.374);
-  let s_spaceHeightBetween=Math.floor(TOTALSIZE/176.46)
-  let s_borderRadius=Math.floor(TOTALSIZE/176.46)
-  let s_minWidth=Math.floor(TOTALSIZE/125);
+  const TOTALSIZE = 1000;
+  let s_cardWidth = Math.floor(TOTALSIZE / 14.01);
+  let s_initialWidthOffset = Math.floor(TOTALSIZE / 136.35);
+  let s_initialHeightOffset = Math.floor(TOTALSIZE / 176.46);
+  let s_spaceBetweenCards = Math.floor(TOTALSIZE / 187.4);
+  let s_cardHeight = Math.floor(TOTALSIZE / 9.374);
+  let s_spaceHeightBetween = Math.floor(TOTALSIZE / 176.46)
+  let s_borderRadius = Math.floor(TOTALSIZE / 176.46)
+  let s_minWidth = Math.floor(TOTALSIZE / 125);
 
 
   /*
@@ -53,15 +53,15 @@ app.service('gameSrvc', function(deckSrvc, $http) {
       3: split
   */
 
-  this.clearAllPlayers=function(){
-      m_players=[];
-      m_currentPlayer=0;
-      m_dealerHand=[];
-      m_numPlayers=0;
-      gameLive=false;
-      m_humanDone=false;
-      m_gameStartCount=0;
-      m_dealerStyles=[];
+  this.clearAllPlayers = function() {
+    m_players = [];
+    m_currentPlayer = 0;
+    m_dealerHand = [];
+    m_numPlayers = 0;
+    gameLive = false;
+    m_humanDone = false;
+    m_gameStartCount = 0;
+    m_dealerStyles = [];
   }
 
   function Player(name, money, seat) {
@@ -80,9 +80,12 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     this.blackjack = false;
     this.isDoubled = false;
     this.followedChart = true;
-    this.styles = [[]];
-    this.total=[];
-    this.soft=[];
+    this.styles = [
+      []
+    ];
+    this.total = [];
+    this.soft = [];
+    this.wonGame = 0;
   }
 
   function addCard(card, player) {
@@ -90,19 +93,19 @@ app.service('gameSrvc', function(deckSrvc, $http) {
       m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand].push(card);
       m_players[m_currentPlayer].humanCards[m_players[m_currentPlayer].currentHand].push(makeHuman(card));
       m_players[m_currentPlayer].styles[m_players[m_currentPlayer].currentHand].push(setStyle(card));
-      m_players[m_currentPlayer].total[m_players[m_currentPlayer].currentHand]=total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
-      m_players[m_currentPlayer].soft[m_players[m_currentPlayer].currentHand]=isSoft(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
+      m_players[m_currentPlayer].total[m_players[m_currentPlayer].currentHand] = total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
+      m_players[m_currentPlayer].soft[m_players[m_currentPlayer].currentHand] = isSoft(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
       return;
     }
     player.cards[player.currentHand].push(card);
     player.humanCards[player.currentHand].push(makeHuman(card));
     player.styles[player.currentHand].push(setStyle(card));
-    if(player.total.length<=player.currentHand){
+    if (player.total.length <= player.currentHand) {
       player.total.push(total(player.cards[0]));
       player.soft.push(isSoft(player.cards[0]));
-    }else{
-      player.total[player.currentHand]=total(player.cards[player.currentHand]);
-      player.soft[player.currentHand]=isSoft(player.cards[player.currentHand]);
+    } else {
+      player.total[player.currentHand] = total(player.cards[player.currentHand]);
+      player.soft[player.currentHand] = isSoft(player.cards[player.currentHand]);
     }
   }
 
@@ -123,14 +126,14 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     } else(m_players.pop());
   }
 
-  function setStyle(card){
+  function setStyle(card) {
     //Returns the style that is appropriate for the card
-    let cardNum=card%13
-    let suit=Math.floor(card/13);
+    let cardNum = card % 13
+    let suit = Math.floor(card / 13);
     return `width:${s_cardWidth}px; height:${s_cardHeight}px; background:url('../images/cards.svg') -${s_initialWidthOffset+cardNum*(s_spaceBetweenCards+s_cardWidth)}px -${s_initialHeightOffset+suit*(s_spaceHeightBetween+s_cardHeight)}px;background-size:${TOTALSIZE}px auto;border-radius:${s_borderRadius}px`
   }
 
-  this.getDealerStyles=function(){
+  this.getDealerStyles = function() {
     return m_dealerStyles;
   }
 
@@ -151,8 +154,9 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     aPlayer.styles = [
       []
     ];
-    aPlayer.total=[];
-    aPlayer.soft=[];
+    aPlayer.total = [];
+    aPlayer.soft = [];
+    aPlayer.wonGame=0;
   }
 
   this.changeNumDecks = function(numDecks) {
@@ -162,13 +166,14 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     deckSrvc.changeNumDecks(numDecks);
   }
 
-  this.deal = function() {
+  this.deal = function(forceShuffle, noDealerBlackJack) { //args are for training
     m_humanDone = false;
     m_dealerHand = [];
-    m_dealerStyles=[];
-    if (deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) {
+    m_dealerStyles = [];
+    if ((deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) || forceShuffle === true) {
       deckSrvc.shuffle();
     }
+
     m_gameStartCount = deckSrvc.getAbsoluteCount();
 
     for (var current of m_players) {
@@ -185,9 +190,23 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     }
     gameLive = true;
 
-    let dealerFirstCard=deckSrvc.draw();
+    let dealerFirstCard = deckSrvc.draw();
     m_dealerHand.push(dealerFirstCard);
-    m_dealerHand.push(deckSrvc.draw());
+    let dealerSecondCard = deckSrvc.draw();
+
+    if (noDealerBlackJack) {
+      if(dealerFirstCard%13===0){
+        while(dealerSecondCard%13>=9){
+          dealerSecondCard=deckSrvc.draw;
+        }
+      }
+      if(dealerFirstCard%13>=9){
+        while(dealerSecondCard%13===0){
+          dealerSecondCard=deckSrvc.draw;
+        }
+      }
+    }
+    m_dealerHand.push(dealerSecondCard);
 
     matchDealerStylesWithHand(true);
 
@@ -196,7 +215,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     }
 
     m_currentPlayer = 0;
-    if(m_players[0].blackjack){ //Hard-coding since only one human
+    if (m_players[0].blackjack) { //Hard-coding since only one human
       incrementPlayer();
     }
   }
@@ -288,10 +307,10 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     let currentHand = currPlayer.cards[currPlayer.currentHand];
     currPlayer.cards.push(currentHand.splice(1, 1));
     currPlayer.humanCards.push(currPlayer.humanCards[currPlayer.currentHand].splice(1, 1));
-    currPlayer.styles.push(currPlayer.styles[currPlayer.currentHand].splice(1,1));
-    currPlayer.total=[];
-    currPlayer.soft=[];
-    currPlayer.cards.forEach((cur,i)=>{
+    currPlayer.styles.push(currPlayer.styles[currPlayer.currentHand].splice(1, 1));
+    currPlayer.total = [];
+    currPlayer.soft = [];
+    currPlayer.cards.forEach((cur, i) => {
       currPlayer.total.push(total(cur));
       currPlayer.soft.push(isSoft(cur));
 
@@ -405,7 +424,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     }
   }
 
-  this.gameIsLive=function(){
+  this.gameIsLive = function() {
     return gameLive;
   }
 
@@ -492,10 +511,11 @@ app.service('gameSrvc', function(deckSrvc, $http) {
       m_players.forEach(function(cur, i, arr) {
         if (!cur.blackjack) { //They can't have split yet, so we're safe ignoring other possible hands
           cur.money -= Number(cur.bet);
+          cur.wonGame=-1;
         }
-        if(cur.isDoubled){  //Need to handle here so that if a player bets again, it won't be halved by resetPlayer
-          cur.bet/=2;
-          cur.isDoubled=false;
+        if (cur.isDoubled) { //Need to handle here so that if a player bets again, it won't be halved by resetPlayer
+          cur.bet /= 2;
+          cur.isDoubled = false;
         }
       })
       return;
@@ -512,6 +532,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     m_players.forEach((cur, i, arr) => {
       if (cur.blackjack) {
         cur.money += Number(cur.bet) * 1.5;
+        cur.wonGame=2;
       } else {
         cur.cards.forEach((hand) => {
           console.log(cur.name + ": Card value: " + total(hand));
@@ -519,19 +540,23 @@ app.service('gameSrvc', function(deckSrvc, $http) {
           if (total(hand) > 21) {
             console.log("OVER");
             cur.money -= Number(cur.bet);
+            cur.wonGame=-1;
             console.log(cur.money);
           } else if (dealerTotal > 21) {
             cur.money += Number(cur.bet);
+            cur.wonGame=1;
           } else if (total(hand) > dealerTotal) {
             cur.money += Number(cur.bet);
+            cur.wonGame=1;
           } else if (total(hand) < dealerTotal) {
             cur.money -= Number(cur.bet);
+            cur.wonGame=-1;
           }
         })
       }
-      if(cur.isDoubled){
-        cur.bet/=2;
-        cur.isDoubled=false;
+      if (cur.isDoubled) {
+        cur.bet /= 2;
+        cur.isDoubled = false;
       }
     })
   }
@@ -566,20 +591,20 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     return true;
   }
 
-  function matchDealerStylesWithHand(hideOne){
-    if(m_dealerHand.length==0){
+  function matchDealerStylesWithHand(hideOne) {
+    if (m_dealerHand.length == 0) {
       console.log("Trying to set dealer styles with no cards in dealer's hand");
       return;
     }
-    while(m_dealerStyles.length>0){
+    while (m_dealerStyles.length > 0) {
       m_dealerStyles.pop();
     }
-    if(hideOne){
+    if (hideOne) {
       m_dealerStyles.push(setStyle(m_dealerHand[0]));
       m_dealerStyles.push(setStyle(CARDBACK)); //That number represents the
       return;
     }
-    m_dealerHand.forEach((cur)=>{
+    m_dealerHand.forEach((cur) => {
       m_dealerStyles.push(setStyle(cur));
     })
   }
