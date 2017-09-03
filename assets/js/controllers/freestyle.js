@@ -9,6 +9,7 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
   gameSrvc.addPlayer('David',10000);
   gameSrvc.addPlayer('Comp1',10000);
   gameSrvc.addPlayer('Comp2',10000);
+  gameSrvc.addPlayer('Comp3',10000);
 
 
   $scope.players=gameSrvc.getPlayers();
@@ -28,7 +29,7 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
   $scope.deal=function(){
     gameSrvc.deal();
     $scope.dealerTop=gameSrvc.humanDealerCard();
-    $scope.dealerTopStyle=gameSrvc.getDealerTopStyle();
+    $scope.dealerStyles=gameSrvc.getDealerStyles();
 
 
     updateButtons();

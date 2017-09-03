@@ -1,4 +1,5 @@
 app.service('gameSrvc', function(deckSrvc, $http) {
+  const CARDBACK=56 //Represents the number that is the back of the cards
   let m_numPlayers = 0;
   let m_numDecks = 8;
   let m_players = [];
@@ -7,6 +8,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   let gameLive = false;
   let m_humanDone = false;
   let m_gameStartCount = 0;
+  let m_dealerStyles=[];
   const MINREMAININGPERPLAYER = 5;
 
   //For styling
@@ -19,6 +21,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   let s_spaceHeightBetween=Math.floor(TOTALSIZE/176.46)
   let s_borderRadius=Math.floor(TOTALSIZE/176.46)
   let s_minWidth=Math.floor(TOTALSIZE/125);
+
 
   /*
   ---Outward Facing Functions:
@@ -104,8 +107,8 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     return `width:${s_cardWidth}px; height:${s_cardHeight}px; background:url('../images/cards.svg') -${s_initialWidthOffset+cardNum*(s_spaceBetweenCards+s_cardWidth)}px -${s_initialHeightOffset+suit*(s_spaceHeightBetween+s_cardHeight)}px;background-size:${TOTALSIZE}px auto;border-radius:${s_borderRadius}px`
   }
 
-  this.getDealerTopStyle=function(){
-    return setStyle(dealerTopCard());
+  this.getDealerStyles=function(){
+    return m_dealerStyles;
   }
 
   function resetPlayer(aPlayer) {
@@ -137,6 +140,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   this.deal = function() {
     m_humanDone = false;
     m_dealerHand = [];
+    m_dealerStyles=[];
     if (deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) {
       deckSrvc.shuffle();
     }
@@ -156,8 +160,12 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     }
     gameLive = true;
 
+    let dealerFirstCard=deckSrvc.draw();
+    m_dealerHand.push(dealerFirstCard);
     m_dealerHand.push(deckSrvc.draw());
-    m_dealerHand.push(deckSrvc.draw());
+
+    matchDealerStylesWithHand(true);
+
     if (total(m_dealerHand) === 21) { //If a blackjack, game's over!
       resolveGame();
     }
@@ -440,6 +448,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
 
     let dealerTotal = total(m_dealerHand)
     if (m_dealerHand.length == 2 && dealerTotal == 21) {
+      matchDealerStylesWithHand(false);
       m_players.forEach(function(cur, i, arr) {
         if (!cur.blackjack) { //They can't have split yet, so we're safe ignoring other possible hands
           cur.money -= Number(cur.bet);
@@ -455,7 +464,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     }
     dealerTotal = total(m_dealerHand);
     console.log("dealer value: " + dealerTotal);
-
+    matchDealerStylesWithHand(false);
     m_players.forEach((cur, i, arr) => {
       if (cur.blackjack) {
         cur.money += Number(cur.bet) * 1.5;
@@ -508,6 +517,26 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     }
     return true;
   }
+
+  function matchDealerStylesWithHand(hideOne){
+    if(m_dealerHand.length==0){
+      console.log("Trying to set dealer styles with no cards in dealer's hand");
+      return;
+    }
+    while(m_dealerStyles.length>0){
+      m_dealerStyles.pop();
+    }
+    if(hideOne){
+      m_dealerStyles.push(setStyle(m_dealerHand[0]));
+      m_dealerStyles.push(setStyle(CARDBACK)); //That number represents the
+      return;
+    }
+    m_dealerHand.forEach((cur)=>{
+      m_dealerStyles.push(setStyle(cur));
+    })
+  }
+
+
 
   this.getChartMove = function() {
     return chartMove();
