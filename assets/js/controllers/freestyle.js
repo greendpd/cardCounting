@@ -1,6 +1,10 @@
 app.controller('freestyleCtrl',function($scope,gameSrvc){
   const humanPlayerNum=0;
 
+  $scope.canBet=true;
+  $scope.showBet=true;
+  $scope.canDeal=true;
+
   let dealerTop=-1;
   gameSrvc.clearAllPlayers();
 
@@ -13,13 +17,12 @@ app.controller('freestyleCtrl',function($scope,gameSrvc){
   $scope.players=gameSrvc.getPlayers();
   $scope.human=$scope.players[humanPlayerNum];
 
-
   function updateButtons(){
-                            //If it's not human, then run the chart
-    $scope.canStand=gameSrvc.canStand(humanPlayerNum);
-    $scope.canHit=gameSrvc.canHit(humanPlayerNum);
-    $scope.canDouble=gameSrvc.canDouble(humanPlayerNum);
-    $scope.canSplit=gameSrvc.canSplit(humanPlayerNum);
+    $scope.showStand=gameSrvc.canStand(humanPlayerNum);
+    $scope.showHit=gameSrvc.canHit(humanPlayerNum);
+    $scope.showDouble=gameSrvc.canDouble(humanPlayerNum);
+    $scope.showSplit=gameSrvc.canSplit(humanPlayerNum);
+    $scope.canBet=!gameSrvc.gameIsLive();
   }
 
   updateButtons();

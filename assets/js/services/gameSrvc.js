@@ -396,12 +396,17 @@ app.service('gameSrvc', function(deckSrvc, $http) {
 
     if (m_currentPlayer === m_players.length) {
       resolveGame();
+      return;
     }
 
     if (m_currentPlayer != 0 && !m_humanDone) {
       m_humanDone = true;
       runHandWithComputer();
     }
+  }
+
+  this.gameIsLive=function(){
+    return gameLive;
   }
 
   function runHandWithComputer() {
@@ -488,6 +493,10 @@ app.service('gameSrvc', function(deckSrvc, $http) {
         if (!cur.blackjack) { //They can't have split yet, so we're safe ignoring other possible hands
           cur.money -= Number(cur.bet);
         }
+        if(cur.isDoubled){  //Need to handle here so that if a player bets again, it won't be halved by resetPlayer
+          cur.bet/=2;
+          cur.isDoubled=false;
+        }
       })
       return;
     }
@@ -519,6 +528,10 @@ app.service('gameSrvc', function(deckSrvc, $http) {
             cur.money -= Number(cur.bet);
           }
         })
+      }
+      if(cur.isDoubled){
+        cur.bet/=2;
+        cur.isDoubled=false;
       }
     })
   }
