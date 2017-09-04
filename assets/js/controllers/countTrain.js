@@ -45,6 +45,8 @@ app.controller('countCtrl',function($scope,gameSrvc,initSrvc,deckSrvc){
     }else{
       $scope.dealButtonText="Deal";
     }
+    $scope.currentRemaining=deckSrvc.cardsRemaining();
+
   }
 
 
