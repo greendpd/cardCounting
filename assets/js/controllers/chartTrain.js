@@ -26,6 +26,7 @@ app.controller('chartCtrl', function($scope,gameSrvc,initSrvc){
     $scope.showDouble=gameSrvc.canDouble(humanPlayerNum);
     $scope.showSplit=gameSrvc.canSplit(humanPlayerNum);
     $scope.canDeal = !gameSrvc.gameIsLive();
+    
   }
 
   $scope.deal=function(){

@@ -56,7 +56,7 @@ app.controller('countCtrl',function($scope,gameSrvc,initSrvc,deckSrvc){
       console.log(`Human Bet: ${$scope.human.bet}\nHuman money: ${$scope.human.money}`);
       $scope.human.money=10000;
       $scope.human.bet=100;
-      gameSrvc.deal(true,true);
+      gameSrvc.deal(false,false);
       $scope.dealerTop=gameSrvc.humanDealerCard();
       $scope.dealerStyles=gameSrvc.getDealerStyles();
       updateButtons();
