@@ -3,7 +3,7 @@
   <div class="table-top">
     <div class="table-top-left">
       <h1>{{title}}</h1>
-      <p class="notification-area">Cards left in deck: {{currentRemaining}}</p>
+      <p class="notification-area" ng-show="showCardsLeft">Cards left in deck: {{currentRemaining}}</p>
       <div class="action-buttons">
         <div ng-show="showBet">
           Bet:
