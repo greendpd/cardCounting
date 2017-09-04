@@ -1,16 +1,10 @@
-app.controller('chartCtrl', function($scope,gameSrvc){
+app.controller('chartCtrl', function($scope,gameSrvc,initSrvc){
   $scope.test="Chart table";
-  humanPlayerNum=0;
-  gameSrvc.clearAllPlayers();
-  gameSrvc.addPlayer("User",10000);
+  let humanPlayerNum=0;
 
-  $scope.canBet=false;
-  $scope.showBet=false;
-  $scope.canDeal=true;
+  initSrvc.showChartTrainOptions($scope);
 
-  $scope.players=gameSrvc.getPlayers();
-  $scope.human=$scope.players[humanPlayerNum];
-  gameSrvc.setForceResult(true);
+
 
   function updateButtons(){
     if (!gameSrvc.gameIsLive()) {

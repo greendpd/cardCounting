@@ -1,9 +1,5 @@
-app.controller('freestyleCtrl', function($scope, gameSrvc) {
+app.controller('freestyleCtrl', function($scope, gameSrvc,initSrvc) {
   const humanPlayerNum = 0;
-
-  $scope.canBet = true;
-  $scope.showBet = true;
-  $scope.canDeal = true;
 
   gameSrvc.clearAllPlayers();
   gameSrvc.setForceResult(false);
@@ -13,9 +9,12 @@ app.controller('freestyleCtrl', function($scope, gameSrvc) {
   gameSrvc.addPlayer('Comp2', 10000);
   gameSrvc.addPlayer('Comp3', 10000);
 
+  initSrvc.showFreestyleOptions($scope);
+
 
   $scope.players = gameSrvc.getPlayers();
   $scope.human = $scope.players[humanPlayerNum];
+
 
   function updateButtons() {
     if (!gameSrvc.gameIsLive()) {
@@ -37,7 +36,6 @@ app.controller('freestyleCtrl', function($scope, gameSrvc) {
     $scope.showSplit = gameSrvc.canSplit(humanPlayerNum);
     $scope.canBet = !gameSrvc.gameIsLive();
     $scope.canDeal = !gameSrvc.gameIsLive();
-
   }
 
   updateButtons();

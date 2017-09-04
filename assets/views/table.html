@@ -9,6 +9,17 @@
   </div>
   <img style="{{dealerTopStyle}}">
   <div class="players-container">
+    <div class="option-inputs">
+      <ul>
+
+      <li ng-show="showCountOption"><input type="checkbox" ng-model="showCount">Display Count</li>
+      <li ng-show="showChartOption"><input type="checkbox" ng-model="showChart">Display Chart</li>
+      <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice with all cards</li>
+      <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Splits</li>
+      <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Ace hands</li>
+      <li ng-show="showCount">{{currentCount}}</li>
+    </ul>
+    </div>
 
     <div class="player" ng-repeat="player in players">
       <ul>
@@ -43,5 +54,6 @@
   </div>
 
   {{result}}
+  <img ng-src="../images/Betting-chart.jpg" ng-show="showChart">
 
 </section>

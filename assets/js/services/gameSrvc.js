@@ -111,6 +111,10 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     }
   }
 
+  this.getCount=function(){
+    return deckSrvc.getAbsoluteCount();
+  }
+
   this.addPlayer = function(name, money) {
     m_players.push(new Player(name, money, m_players.length));
     if (m_players.length > 1) {
