@@ -94,6 +94,10 @@ li a:hover:not(.active) {
 
 .chart-image{
   float:right;
+  position:fixed;
+  margin-left: 45%;
+  width:50%;
+
 
 }
 
@@ -173,6 +177,7 @@ li a:hover:not(.active) {
   font-size: 2em;
   margin-left: 60px;
   margin-top:20px;
+  width: 300px;
 }
 
 .notification-area{
