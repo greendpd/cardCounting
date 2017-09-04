@@ -24,13 +24,14 @@ app.controller('chartCtrl', function($scope,gameSrvc){
         $scope.result="Push";
       }
     } else {
-      result = "";
+      $scope.result = "";
     }
 
     $scope.showStand=gameSrvc.canStand(humanPlayerNum);
     $scope.showHit=gameSrvc.canHit(humanPlayerNum);
     $scope.showDouble=gameSrvc.canDouble(humanPlayerNum);
     $scope.showSplit=gameSrvc.canSplit(humanPlayerNum);
+    $scope.canDeal = !gameSrvc.gameIsLive();
   }
 
   $scope.deal=function(){

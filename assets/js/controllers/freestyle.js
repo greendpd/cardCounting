@@ -5,7 +5,6 @@ app.controller('freestyleCtrl', function($scope, gameSrvc) {
   $scope.showBet = true;
   $scope.canDeal = true;
 
-  let dealerTop = -1;
   gameSrvc.clearAllPlayers();
   gameSrvc.setForceResult(false);
 
@@ -30,13 +29,14 @@ app.controller('freestyleCtrl', function($scope, gameSrvc) {
         $scope.result="Push";
       }
     } else {
-      result = "";
+      $scope.result = "";
     }
     $scope.showStand = gameSrvc.canStand(humanPlayerNum);
     $scope.showHit = gameSrvc.canHit(humanPlayerNum);
     $scope.showDouble = gameSrvc.canDouble(humanPlayerNum);
     $scope.showSplit = gameSrvc.canSplit(humanPlayerNum);
     $scope.canBet = !gameSrvc.gameIsLive();
+    $scope.canDeal = !gameSrvc.gameIsLive();
 
   }
 
