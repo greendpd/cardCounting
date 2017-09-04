@@ -11,6 +11,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   let m_dealerStyles = [];
   const MINREMAININGPERPLAYER = 5;
   let m_forceResultToChart = false;
+  let m_dealerValue="";
 
   //For styling
   const TOTALSIZE = 1000;
@@ -64,6 +65,16 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     m_gameStartCount = 0;
     m_dealerStyles = [];
     deckSrvc.shuffle();
+  }
+
+  this.getDealerValue=function(){
+    if(m_dealerValue===0){
+      return "";
+    }
+    if(m_dealerValue>21){
+      return "Busted!"
+    }
+    return m_dealerValue;
   }
 
   function Player(name, money, seat) {
@@ -177,6 +188,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   }
 
   this.deal = function(forceShuffle, noDealerBlackJack) { //args are for training
+    m_dealerValue=0;
     m_humanDone = false;
     m_dealerHand = [];
     m_dealerStyles = [];
@@ -738,6 +750,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
       m_dealerHand.push(nextDealerCard);
     }
     dealerTotal = total(m_dealerHand);
+    m_dealerValue=dealerTotal;
     console.log("dealer value: " + dealerTotal);
     matchDealerStylesWithHand(false);
     m_players.forEach((cur, i, arr) => {

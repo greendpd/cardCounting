@@ -5,10 +5,10 @@ body{
 
 
 div.players-container{
+  /*background-color: red;*/
   color:white;
   display: flex;
   justify-content:space-between;
-  max-width:1000px;
 }
 
 .resize-card{
@@ -94,15 +94,57 @@ li a:hover:not(.active) {
   float:right;
 }
 
+.table-top{
+  width:97%;
+  margin:auto;
+  height:25vh;
+  /*background-color: red;*/
+  display: flex;
+}
 
+.table-top-left{
+  width:30%;
+  height:100%;
 
+  /*background-color: blue;*/
+}
 
+.dealer{
 
+}
 
+.dealer-cards{
+  display:flex;
 
+}
 
+.training-options{
+  width:500px;
+  height:50px;
+  /*background-color: orange;*/
+  display:flex;
+  flex-direction: column;
+}
 
+.list-column{
+  display: flex;
+  flex-direction: column;
+}
 
+.training-options li{
+  margin:0px;
+  padding:0px;
+}
+
+.player{
+  display:flex;
+  flex-direction: column;
+}
+
+.player ul{
+  display:flex;
+  flex-direction: column;
+}
 
 
 

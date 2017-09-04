@@ -1,24 +1,30 @@
 <section style="height:90vh;background: url('../images/green_felt.jpg');background-size:cover">
-  <div style="display:flex">
 
-
-    <div ng-repeat="style in dealerStyles track by $index">
-      <img style="{{style}}">
+  <div class="table-top">
+    <div class="table-top-left">
+      <h1>{{title}}</h1>
+      <div class="training-options">
+        <ul class="list-column">
+          <li ng-show="showCountOption"><input type="checkbox" ng-model="showCount">Display Count</li>
+          <li ng-show="showChartOption"><input type="checkbox" ng-model="showChart">Display Chart</li>
+          <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice with all cards</li>
+          <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Splits</li>
+          <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Ace hands</li>
+          <li ng-show="showCount">{{currentCount}}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="dealer">
+      <h1>Dealer: {{dealerValue}}</h1>
+      <div class="dealer-cards">
+        <div ng-repeat="style in dealerStyles track by $index">
+          <img style="{{style}}">
+        </div>
+      </div>
     </div>
   </div>
-  <img style="{{dealerTopStyle}}">
-  <div class="players-container">
-    <div class="option-inputs">
-      <ul>
 
-      <li ng-show="showCountOption"><input type="checkbox" ng-model="showCount">Display Count</li>
-      <li ng-show="showChartOption"><input type="checkbox" ng-model="showChart">Display Chart</li>
-      <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice with all cards</li>
-      <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Splits</li>
-      <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Ace hands</li>
-      <li ng-show="showCount">{{currentCount}}</li>
-    </ul>
-    </div>
+  <div class="players-container">
 
     <div class="player" ng-repeat="player in players">
       <ul>
@@ -29,10 +35,10 @@
 
       <div style="display:flex" ng-repeat="handStyles in player.styles track by $index">
         <div ng-repeat="card in handStyles track by $index">
-            <img style="{{card}}">
+          <img style="{{card}}">
         </div>
+        Value: {{player.total[$index]}}
       </div>
-      Total: {{player.total}}
 
       <div class="players-container">
         <!-- <img style="width:214px; height:120px;background:url('../images/cards.svg') -38px 0px;background-size:3000px auto;"> -->

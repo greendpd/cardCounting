@@ -7,7 +7,6 @@ app.controller('freestyleCtrl', function($scope, gameSrvc,initSrvc) {
   gameSrvc.addPlayer('David', 10000);
   gameSrvc.addPlayer('Comp1', 10000);
   gameSrvc.addPlayer('Comp2', 10000);
-  gameSrvc.addPlayer('Comp3', 10000);
 
   initSrvc.showFreestyleOptions($scope);
 
@@ -30,6 +29,7 @@ app.controller('freestyleCtrl', function($scope, gameSrvc,initSrvc) {
     } else {
       $scope.result = "";
     }
+    $scope.dealerValue=gameSrvc.getDealerValue();
     $scope.showStand = gameSrvc.canStand(humanPlayerNum);
     $scope.showHit = gameSrvc.canHit(humanPlayerNum);
     $scope.showDouble = gameSrvc.canDouble(humanPlayerNum);
