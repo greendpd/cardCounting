@@ -3,16 +3,7 @@
   <div class="table-top">
     <div class="table-top-left">
       <h1>{{title}}</h1>
-      <div class="training-options">
-        <ul class="list-column">
-          <li ng-show="showCountOption"><input type="checkbox" ng-model="showCount">Display Count</li>
-          <li ng-show="showChartOption"><input type="checkbox" ng-model="showChart">Display Chart</li>
-          <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice with all cards</li>
-          <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Splits</li>
-          <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Ace hands</li>
-          <li ng-show="showCount">{{currentCount}}</li>
-        </ul>
-      </div>
+
     </div>
     <div class="dealer">
       <h1>Dealer: {{dealerValue}}</h1>
@@ -20,6 +11,18 @@
         <div ng-repeat="style in dealerStyles track by $index">
           <img style="{{style}}">
         </div>
+      </div>
+    </div>
+    <div class="table-top-right">
+      <div class="training-options">
+        <ul class="list-column">
+          <li ng-show="showCountOption"><input type="checkbox" ng-model="showCount">Display Count</li>
+          <li ng-show="showChartOption"><input type="checkbox" ng-model="showChart">Display Chart</li>
+          <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice with all cards</li>
+          <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Splits</li>
+          <li ng-show="showPracticeOptions"><input type="radio" name="name" value="value">Practice Ace hands</li>
+          <li class="current-count" ng-show="showCount">Count: {{currentCount}}</li>
+        </ul>
       </div>
     </div>
   </div>

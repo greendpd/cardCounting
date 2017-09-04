@@ -110,7 +110,8 @@ li a:hover:not(.active) {
 }
 
 .dealer{
-
+  /*background-color: red;*/
+  width:50%;
 }
 
 .dealer-cards{
@@ -146,8 +147,13 @@ li a:hover:not(.active) {
   flex-direction: column;
 }
 
+.table-top-right{
+  width:20%;
+}
 
-
+.current-count{
+  font-size: 2em;
+}
 
 
 

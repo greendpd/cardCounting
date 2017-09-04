@@ -6,7 +6,6 @@ app.controller('countCtrl',function($scope,gameSrvc,initSrvc){
   gameSrvc.addPlayer('David', 10000);
   gameSrvc.addPlayer('Comp1', 10000);
   gameSrvc.addPlayer('Comp2', 10000);
-  gameSrvc.addPlayer('Comp3', 10000);
 
   initSrvc.showCountTrainOptions($scope);
   $scope.players = gameSrvc.getPlayers();
@@ -27,6 +26,8 @@ app.controller('countCtrl',function($scope,gameSrvc,initSrvc){
       }else if($scope.human.wonGame===0){
         $scope.result="Push";
       }
+      $scope.currentCount=gameSrvc.getCount();
+
     } else {
       $scope.result = "";
     }
@@ -40,7 +41,6 @@ app.controller('countCtrl',function($scope,gameSrvc,initSrvc){
 
 
     $scope.deal=function(){
-      $scope.currentCount=gameSrvc.getCount();
       console.log(`Human Bet: ${$scope.human.bet}\nHuman money: ${$scope.human.money}`);
       $scope.human.money=10000;
       $scope.human.bet=100;
