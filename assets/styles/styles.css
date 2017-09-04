@@ -5,7 +5,9 @@ body{
 
 
 div.players-container{
+  margin:auto;
   /*background-color: red;*/
+  width: 90%;
   color:white;
   display: flex;
   justify-content:space-between;
@@ -105,13 +107,16 @@ li a:hover:not(.active) {
 .table-top-left{
   width:30%;
   height:100%;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
 
   /*background-color: blue;*/
 }
 
 .dealer{
   /*background-color: red;*/
-  width:50%;
+  width:60%;
 }
 
 .dealer-cards{
@@ -120,7 +125,7 @@ li a:hover:not(.active) {
 }
 
 .training-options{
-  width:500px;
+  margin-top:20px;
   height:50px;
   /*background-color: orange;*/
   display:flex;
@@ -154,6 +159,33 @@ li a:hover:not(.active) {
 .current-count{
   font-size: 2em;
 }
+
+.action-buttons{
+
+}
+
+.hit-button{
+
+}
+
+.display-result{
+  font-size: 2em;
+  margin-left: 60px;
+  margin-top:20px;
+}
+
+.notification-area{
+  font-size: 2em;
+}
+
+
+
+
+
+
+
+
+
 
 
 

@@ -65,6 +65,8 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     m_gameStartCount = 0;
     m_dealerStyles = [];
     deckSrvc.shuffle();
+    m_dealerValue="";
+
   }
 
   this.getDealerValue=function(){
@@ -98,7 +100,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     ];
     this.total = [];
     this.soft = [];
-    this.wonGame = 0;
+    this.wonGame = null;
   }
 
   function addCard(card, player) {
@@ -180,7 +182,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     ];
     aPlayer.total = [];
     aPlayer.soft = [];
-    aPlayer.wonGame = 0;
+    aPlayer.wonGame = null;
   }
 
   this.changeNumDecks = function(numDecks) {

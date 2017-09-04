@@ -3,7 +3,20 @@
   <div class="table-top">
     <div class="table-top-left">
       <h1>{{title}}</h1>
-
+      <p class="notification-area">{{noticeA}}</p>
+      <div class="action-buttons">
+        <div ng-show="showBet">
+          Bet:
+          <input type="text" ng-model="human.bet" ng-show="showBet" ng-disabled="!canBet">
+        </div>
+        <button class="hit-button" type="button" ng-click="hit()" ng-show="showHit">Hit</button>
+        <button type="button" ng-click="stand()" ng-show="showStand">Stand</button>
+        <button type="button" ng-click="double()" ng-show="showDouble">Double</button>
+        <button type="button" ng-click="split()" ng-show="showSplit">Split</button>
+        <div class="">
+          <button type="button" ng-click="deal()" ng-disabled="!canDeal">DEAL!!!</button>
+        </div>
+      </div>
     </div>
     <div class="dealer">
       <h1>Dealer: {{dealerValue}}</h1>
@@ -32,15 +45,16 @@
     <div class="player" ng-repeat="player in players">
       <ul>
         <li>Name: {{player.name}}</li>
-        <li>Cash: {{player.money}}</li>
-        <li>Bet: {{player.bet}}</li>
+        <li ng-show="showCash">Cash: {{player.money}}</li>
+        <li ng-show="showBet">Bet: {{player.bet}}</li>
       </ul>
 
-      <div style="display:flex" ng-repeat="handStyles in player.styles track by $index">
+      <div style="display:flex;" ng-repeat="handStyles in player.styles track by $index">
+
         <div ng-repeat="card in handStyles track by $index">
           <img style="{{card}}">
         </div>
-        Value: {{player.total[$index]}}
+         Value: {{player.total[$index]}}
       </div>
 
       <div class="players-container">
@@ -49,19 +63,10 @@
       </div>
     </div>
   </div>
-  <div class="">
-    <input type="text" ng-model="human.bet" ng-show="showBet" ng-disabled="!canBet">
-  </div>
 
-  <button type="button" ng-click="hit()" ng-show="showHit">Hit</button>
-  <button type="button" ng-click="stand()" ng-show="showStand">Stand</button>
-  <button type="button" ng-click="double()" ng-show="showDouble">Double</button>
-  <button type="button" ng-click="split()" ng-show="showSplit">Split</button>
-  <div class="">
-    <button type="button" ng-click="deal()" ng-disabled="!canDeal">DEAL!!!</button>
+  <div class="display-result">
+    {{result}}
   </div>
-
-  {{result}}
   <img class="chart-image" ng-src="../images/Betting-chart.jpg" ng-show="showChart">
 
 </section>
