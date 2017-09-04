@@ -1,4 +1,4 @@
-app.controller('freestyleCtrl', function($scope, gameSrvc,initSrvc) {
+app.controller('freestyleCtrl', function($scope, gameSrvc,initSrvc,deckSrvc) {
   const humanPlayerNum = 0;
 
   gameSrvc.clearAllPlayers();
@@ -13,6 +13,7 @@ app.controller('freestyleCtrl', function($scope, gameSrvc,initSrvc) {
 
   $scope.players = gameSrvc.getPlayers();
   $scope.human = $scope.players[humanPlayerNum];
+  $scope.currentRemaining=deckSrvc.cardsRemaining();
 
 
   function updateButtons() {
@@ -41,6 +42,8 @@ app.controller('freestyleCtrl', function($scope, gameSrvc,initSrvc) {
     }else{
       $scope.dealButtonText="Deal";
     }
+    $scope.currentRemaining=deckSrvc.cardsRemaining();
+
   }
 
   updateButtons();

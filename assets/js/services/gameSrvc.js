@@ -812,7 +812,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
         cur.isDoubled = false;
       }
     })
-    m_willShuffle= ((deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) || forceShuffle === true)
+    m_willShuffle= ((deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1))
 
   }
 

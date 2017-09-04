@@ -1,4 +1,4 @@
-app.controller('countCtrl',function($scope,gameSrvc,initSrvc){
+app.controller('countCtrl',function($scope,gameSrvc,initSrvc,deckSrvc){
   gameSrvc.clearAllPlayers();
   gameSrvc.setForceResult(false);
   let humanPlayerNum=0;
@@ -13,6 +13,8 @@ app.controller('countCtrl',function($scope,gameSrvc,initSrvc){
 
   $scope.currentCount=gameSrvc.getCount();
   gameSrvc.setHighlight(true);
+  $scope.currentRemaining=deckSrvc.cardsRemaining();
+
 
 
 
