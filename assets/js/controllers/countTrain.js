@@ -34,6 +34,8 @@ app.controller('countCtrl',function($scope,gameSrvc,initSrvc,deckSrvc){
     } else {
       $scope.result = "";
     }
+    $scope.dealerValue=gameSrvc.getDealerValue();
+
     $scope.showStand = gameSrvc.canStand(humanPlayerNum);
     $scope.showHit = gameSrvc.canHit(humanPlayerNum);
     $scope.showDouble = gameSrvc.canDouble(humanPlayerNum);

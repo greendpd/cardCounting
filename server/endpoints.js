@@ -57,6 +57,9 @@ module.exports = {
   deleteHistory:function(req,res){
     database.deleteHistory([req.params.playerId]).then((response)=>res.json(response));
   },
+  getStats:function(req,res){
+    database.getStats([req.params.id]).then((response)=>res.json(response));
+  },
 
   setDB: function(db) {
     database = db;

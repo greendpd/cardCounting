@@ -32,6 +32,7 @@ massive({
 
 
 app.get('/api/getMoney/:playerId',endpoints.getMoney);
+app.get('/api/getStats/:id',endpoints.getStats);
 app.post('/api/addHand',endpoints.addHand)
 //put playerId, and then need a query money=newVal
 app.put('/api/updateMoney/:playerId', endpoints.setMoney);
