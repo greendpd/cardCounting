@@ -1,6 +1,6 @@
 
 body{
-  background-color: #a11;
+  background-color: white;
 }
 
 
@@ -25,6 +25,90 @@ div.option-inputs{
 
 }
 
-ul {
-  list-style-type:none;
+ul.on-main {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
 }
+
+ul {
+  list-style-type: none;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li {
+    float: left;
+}
+
+.active {
+    background-color: #4CAF50;
+}
+
+li a:hover:not(.active) {
+    background-color: #111;
+}
+
+.home-main-div{
+  width:30%;
+  height:370px;
+  margin:auto;
+  text-align: center;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  /*background: url('../images/moreGreenFelt.jpg');*/
+  border-radius: 0px 0px 40px 40px;
+}
+
+.home-button{
+
+  width: 400px;
+  height:50px;
+  font-size: 2em;
+  border-radius:10px;
+  border-width: 0px;
+  margin-bottom: 5px;
+  background-color:#3CAF50;
+}
+
+.top-menu-button{
+  margin-top:0px
+}
+
+.page-title{
+  font-size: 3em;
+  margin-top:5px;
+  margin-bottom:10px;
+  color:#FAFAFA;
+}
+
+.chart-image{
+  float:right;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**/

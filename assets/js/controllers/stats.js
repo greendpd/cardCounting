@@ -1,4 +1,3 @@
-app.controller('statsCtrl',function($scope){
-  $scope.test="Stats controller working"
+app.controller('statsCtrl',function($scope,gameSrvc){
   gameSrvc.clearAllPlayers();
 })

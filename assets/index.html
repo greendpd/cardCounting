@@ -10,10 +10,22 @@
     <link rel="stylesheet" href="/styles/styles.css">
   </head>
   <body ng-app="theApp">
-    Top of body
+
+    <ul class="on-main">
+      <li><a ui-sref="home">Home</a></li>
+      <li><a ui-sref="tableFreestyle">Freestyle Game</a></li>
+      <li><a ui-sref="tableTrainChart">Chart Training</a></li>
+      <li><a ui-sref="tableTrainCount">Counting Training</a></li>
+      <li style="float:right"><a class="active" ui-sref="about">About</a></li>
+      <li style="float:right"><a class="active" ui-sref="stats">Stats</a></li>
+    </ul>
+
+
     <ui-view></ui-view>
-    Bottom of body
+
+
   </body>
+
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js"></script>
   <script src="./js/app.js"> </script>
