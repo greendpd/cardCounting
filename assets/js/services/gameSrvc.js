@@ -22,7 +22,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   let s_cardHeight = Math.floor(TOTALSIZE / 9.374);
   let s_spaceHeightBetween = Math.floor(TOTALSIZE / 176.46)
   let s_borderRadius = Math.floor(TOTALSIZE / 176.46)
-  let s_minWidth = Math.floor(TOTALSIZE / 125);
+  let s_minWidth = Math.floor(TOTALSIZE / 65);
 
 
   /*
@@ -147,10 +147,13 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     } else(m_players.pop());
   }
 
-  function setStyle(card) {
+  function setStyle(card,notLast) {
     //Returns the style that is appropriate for the card
     let cardNum = card % 13
     let suit = Math.floor(card / 13);
+    if(notLast){
+      return `width:${s_minWidth}px; height:${s_cardHeight}px; background:url('../images/cards.svg') -${s_initialWidthOffset+cardNum*(s_spaceBetweenCards+s_cardWidth)}px -${s_initialHeightOffset+suit*(s_spaceHeightBetween+s_cardHeight)}px;background-size:${TOTALSIZE}px auto;border-radius: ${s_borderRadius}px 0px 0px ${s_borderRadius}px`
+    }
     return `width:${s_cardWidth}px; height:${s_cardHeight}px; background:url('../images/cards.svg') -${s_initialWidthOffset+cardNum*(s_spaceBetweenCards+s_cardWidth)}px -${s_initialHeightOffset+suit*(s_spaceHeightBetween+s_cardHeight)}px;background-size:${TOTALSIZE}px auto;border-radius:${s_borderRadius}px`
   }
 
