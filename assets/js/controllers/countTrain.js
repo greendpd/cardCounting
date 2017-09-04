@@ -12,7 +12,7 @@ app.controller('countCtrl',function($scope,gameSrvc,initSrvc){
   $scope.human = $scope.players[humanPlayerNum];
 
   $scope.currentCount=gameSrvc.getCount();
-
+  gameSrvc.setHighlight(true);
 
 
   function updateButtons() {

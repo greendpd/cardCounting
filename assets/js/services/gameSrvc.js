@@ -12,6 +12,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   const MINREMAININGPERPLAYER = 5;
   let m_forceResultToChart = false;
   let m_dealerValue="";
+  let m_highlightCountCards=false;
 
   //For styling
   const TOTALSIZE = 1000;
@@ -66,7 +67,12 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     m_dealerStyles = [];
     deckSrvc.shuffle();
     m_dealerValue="";
+    m_highlightCountCards=false;
 
+  }
+
+  this.setHighlight=function(highlightCountCards){
+    m_highlightCountCards=highlightCountCards;
   }
 
   this.getDealerValue=function(){
@@ -153,10 +159,19 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     //Returns the style that is appropriate for the card
     let cardNum = card % 13
     let suit = Math.floor(card / 13);
-    if(notLast){
-      return `width:${s_minWidth}px; height:${s_cardHeight}px; background:url('../images/cards.svg') -${s_initialWidthOffset+cardNum*(s_spaceBetweenCards+s_cardWidth)}px -${s_initialHeightOffset+suit*(s_spaceHeightBetween+s_cardHeight)}px;background-size:${TOTALSIZE}px auto;border-radius: ${s_borderRadius}px 0px 0px ${s_borderRadius}px`
+    let border="";
+    if(m_highlightCountCards && card<52){
+      let cardVal=cardValue(card);
+      if(cardVal==10 ||cardVal==1){
+        border="border: 4px solid black;";
+      }else if(cardVal>=2 && cardVal<=6){
+        border="border: 4px solid blue;";
+      }
     }
-    return `width:${s_cardWidth}px; height:${s_cardHeight}px; background:url('../images/cards.svg') -${s_initialWidthOffset+cardNum*(s_spaceBetweenCards+s_cardWidth)}px -${s_initialHeightOffset+suit*(s_spaceHeightBetween+s_cardHeight)}px;background-size:${TOTALSIZE}px auto;border-radius:${s_borderRadius}px`
+    if(notLast){
+      return `width:${s_minWidth}px; height:${s_cardHeight}px; background:url('../images/cards.svg') -${s_initialWidthOffset+cardNum*(s_spaceBetweenCards+s_cardWidth)}px -${s_initialHeightOffset+suit*(s_spaceHeightBetween+s_cardHeight)}px;background-size:${TOTALSIZE}px auto;border-radius: ${s_borderRadius}px 0px 0px ${s_borderRadius}px;${border}`
+    }
+    return `width:${s_cardWidth}px; height:${s_cardHeight}px; background:url('../images/cards.svg') -${s_initialWidthOffset+cardNum*(s_spaceBetweenCards+s_cardWidth)}px -${s_initialHeightOffset+suit*(s_spaceHeightBetween+s_cardHeight)}px;background-size:${TOTALSIZE}px auto;border-radius:${s_borderRadius}px;${border}`
   }
 
   this.getDealerStyles = function() {
