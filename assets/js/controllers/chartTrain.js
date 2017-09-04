@@ -10,6 +10,7 @@ app.controller('chartCtrl', function($scope,gameSrvc){
 
   $scope.players=gameSrvc.getPlayers();
   $scope.human=$scope.players[humanPlayerNum];
+  gameSrvc.setForceResult(true);
 
   function updateButtons(){
     if (!gameSrvc.gameIsLive()) {

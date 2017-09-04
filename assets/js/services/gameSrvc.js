@@ -10,6 +10,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   let m_gameStartCount = 0;
   let m_dealerStyles = [];
   const MINREMAININGPERPLAYER = 5;
+  let m_forceResultToChart = false;
 
   //For styling
   const TOTALSIZE = 1000;
@@ -62,6 +63,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     m_humanDone = false;
     m_gameStartCount = 0;
     m_dealerStyles = [];
+    deckSrvc.shuffle();
   }
 
   function Player(name, money, seat) {
@@ -120,6 +122,10 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     return m_players;
   }
 
+  this.setForceResult = function(forceResult) {
+    m_forceResultToChart = forceResult;
+  }
+
   this.removePlayer = function() { //~~~Still need to handle computers going bankrupt
     if (m_players.length <= 1) {
       return;
@@ -156,7 +162,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     ];
     aPlayer.total = [];
     aPlayer.soft = [];
-    aPlayer.wonGame=0;
+    aPlayer.wonGame = 0;
   }
 
   this.changeNumDecks = function(numDecks) {
@@ -195,14 +201,14 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     let dealerSecondCard = deckSrvc.draw();
 
     if (noDealerBlackJack) {
-      if(dealerFirstCard%13===0){
-        while(dealerSecondCard%13>=9){
-          dealerSecondCard=deckSrvc.draw;
+      if (dealerFirstCard % 13 === 0) {
+        while (dealerSecondCard % 13 >= 9) {
+          dealerSecondCard = deckSrvc.draw();
         }
       }
-      if(dealerFirstCard%13>=9){
-        while(dealerSecondCard%13===0){
-          dealerSecondCard=deckSrvc.draw;
+      if (dealerFirstCard % 13 >= 9) {
+        while (dealerSecondCard % 13 === 0) {
+          dealerSecondCard = deckSrvc.draw();
         }
       }
     }
@@ -252,7 +258,51 @@ app.service('gameSrvc', function(deckSrvc, $http) {
       m_players[m_currentPlayer].followedChart = false;
     }
 
-    addCard(deckSrvc.draw());
+    if (m_forceResultToChart && m_currentPlayer === 0) { //Make sure this only happens with the human player
+      let currentValue = m_players[0].total[m_players[0].currentHand];
+      let lastHand = m_players[0].currentHand === m_players[0].total.length - 1;
+      let cardToAdd = -1;
+      if (m_players[0].followedChart) {
+        let possibilities = [];
+        for (let x = 1; x <= 12; x++) {
+          let xVal = x + 1;
+          if (xVal > 10) {
+            xVal = 10;
+          }
+          if (currentValue + xVal <= 21) {
+            if (!lastHand) {
+              if (currentValue < 21) {
+                possibilities.push(x);
+              }
+            } else {
+              possibilities.push(x)
+            }
+          }
+        }
+        cardToAdd = possibilities[Math.floor(Math.random() * possibilities.length)];
+        cardToAdd += 13 * (Math.floor(Math.random() * 4));
+        addCard(cardToAdd);
+      } else {
+        let possibilities = [];
+
+        for (let x = 1; x <= 12; x++) {
+          let xVal = x + 1;
+          if (xVal > 10) {
+            xVal = 10;
+          }
+          if (currentValue + xVal != 21) {
+            possibilities.push(x)
+          }
+        }
+
+        cardToAdd = possibilities[Math.floor(Math.random() * possibilities.length)];
+        cardToAdd += 13 * (Math.floor(Math.random() * 4));
+        addCard(cardToAdd);
+      }
+
+    } else {
+      addCard(deckSrvc.draw());
+    }
     let toRet = total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
     if (toRet >= 21) {
       incrementPlayer();
@@ -290,7 +340,50 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     m_players[m_currentPlayer].bet *= 2;
     m_players[m_currentPlayer].isDoubled = true;
 
-    addCard(deckSrvc.draw());
+    if (m_forceResultToChart && m_currentPlayer === 0) { //Make sure this only happens with the human player
+      let currentValue = m_players[0].total[m_players[0].currentHand];
+      let lastHand = m_players[0].currentHand === m_players[0].total.length - 1;
+      let cardToAdd = -1;
+      if (m_players[0].followedChart) {
+        let possibilities = [];
+        for (let x = 1; x <= 12; x++) {
+          let xVal = x + 1;
+          if (xVal > 10) {
+            xVal = 10;
+          }
+          if (currentValue + xVal <= 21) {
+            if (!lastHand) {
+              if (currentValue < 21) {
+                possibilities.push(x);
+              }
+            } else {
+              possibilities.push(x)
+            }
+          }
+        }
+        cardToAdd = possibilities[Math.floor(Math.random() * possibilities.length)];
+        cardToAdd += 13 * (Math.floor(Math.random() * 4));
+        addCard(cardToAdd);
+      } else {
+        let possibilities = [];
+        for (let x = 1; x <= 12; x++) {
+          let xVal = x + 1;
+          if (xVal > 10) {
+            xVal = 10;
+          }
+          if (currentValue + xVal != 21) {
+            possibilities.push(x)
+          }
+        }
+        cardToAdd = possibilities[Math.floor(Math.random() * possibilities.length)];
+        cardToAdd += 13 * (Math.floor(Math.random() * 4));
+        addCard(cardToAdd);
+      }
+
+    } else {
+      addCard(deckSrvc.draw());
+    }
+
     let toRet = total(m_players[m_currentPlayer].cards[m_players[m_currentPlayer].currentHand]);
     incrementPlayer();
   }
@@ -499,7 +592,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     return false;
   }
 
-  function resolveGame() {
+  function resolveGame() { //forceResult true makes it so the result matches whether the chart was followed, unless there is a dealer blackjack
     if (!gameLive) {
       console.log("trying to resolve on a not-live game");
     }
@@ -511,7 +604,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
       m_players.forEach(function(cur, i, arr) {
         if (!cur.blackjack) { //They can't have split yet, so we're safe ignoring other possible hands
           cur.money -= Number(cur.bet);
-          cur.wonGame=-1;
+          cur.wonGame = -1;
         }
         if (cur.isDoubled) { //Need to handle here so that if a player bets again, it won't be halved by resetPlayer
           cur.bet /= 2;
@@ -523,8 +616,122 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     //Currently NOT calling to DB on dealer blackjacks, instead going to put in a certain pecentage of the games as being dealer blackjacks
     putHandToDB();
 
+    if (m_forceResultToChart && total(m_dealerHand) >= 17 && total(m_dealerHand) <= 21) {
+      let humanPlayer = m_players[0];
+      if (humanPlayer.followedChart) { //if they are at 17 or higher, pop until they're not, then the next section will fix it up
+        let minHand = null;
+        for (let x of humanPlayer.total) {
+          if (minHand === null || x < minHand) {
+            minHand = x;
+          }
+        }
+        while (total(m_dealerHand) >= 17) {
+          if (m_dealerHand.length <= 1) {
+            console.log(`Dealer registered as higher than 17 with ${m_dealerHand.length} cards`);
+          }
+          m_dealerHand.pop();
+        }
+      } else if (!humanPlayer.followedChart) {
+        let maxHand = null;
+        for (let x of humanPlayer.total) {
+          if (maxHand === null || (x > maxHand && maxHand <= 21)) {
+            maxHand = x;
+          }
+        }
+        if (maxHand === 21) {
+          console.log("Player got 21 without following chart");
+        }
+      }
+    }
+
     while (total(m_dealerHand) < 17) {
-      m_dealerHand.push(deckSrvc.draw());
+      let nextDealerCard = (deckSrvc.draw())
+      if (m_forceResultToChart) {
+        let humanPlayer = m_players[0];
+        if (humanPlayer.followedChart) {
+          let dealerUnder = null;
+          for (let x of humanPlayer.total) {
+            if (x > 21) {
+              console.log(`Player followed chart but went over`);
+            }
+            if (dealerUnder === null || dealerUnder > x) {
+              dealerUnder = x;
+            }
+          }
+
+          let currDealerTotal = total(m_dealerHand);
+          let nextCardPossibilities = [];
+          for (let i = 1; i <= 12; i++) {
+            let val = i + 1;
+            if (val > 10) {
+              val = 10;
+            }
+            if (!(val + currDealerTotal >= 17 && val + currDealerTotal >= dealerUnder && val + currDealerTotal <= 21)) {
+              nextCardPossibilities.push(i);
+            }
+          }
+          if (!(currDealerTotal + 1 >= 17 && currDealerTotal + 1 >= dealerUnder && currDealerTotal + 1 <= 21)) { //can we put in an ace?
+            if (!(currDealerTotal + 11 >= 17 && currDealerTotal + 11 >= dealerUnder && currDealerTotal + 11 <= 21)) {
+              nextCardPossibilities.push(0);
+            }
+          }
+          if (nextCardPossibilities.length === 0) {
+            console.log("No possibilities for forcing win");
+            return;
+          }
+
+          nextDealerCard = nextCardPossibilities[Math.floor(Math.random() * nextCardPossibilities.length)];
+          nextDealerCard += 13 * Math.floor(Math.random() * 4);
+
+        } else {
+          let currDealerTotal = total(m_dealerHand);
+          let dealerOver = null;
+          for (let x of humanPlayer.total) {
+            if (dealerOver === null || dealerOver < x) {
+              if (x < 21) {
+                dealerOver = x;
+              }
+              if (x === 21) {
+                console.log("Player didn't follow chart and got a 21");
+                return;
+              }
+            }
+          }
+          if (dealerOver === null) {
+            dealerOver = 0;
+          }
+          let nextCardPossibilities = [];
+          for (let i = 1; i <= 12; i++) {
+            let val = i + 1;
+            if (val > 10) {
+              val = 10;
+            }
+            if (val + currDealerTotal >= 17 && val + currDealerTotal >= dealerOver && val + currDealerTotal <= 21) {
+              nextCardPossibilities.push(i);
+            } else if (val + currDealerTotal < 17) {
+              nextCardPossibilities.push(i);
+            }
+          }
+          if (currDealerTotal + 1 >= 17 && currDealerTotal + 1 > dealerOver && currDealerTotal + 1 <= 21) { //can we put in an ace?
+            nextCardPossibilities.push(0);
+          } else if (currDealerTotal + 11 >= 17 && currDealerTotal + 11 > dealerOver && currDealerTotal + 11 <= 21) {
+            nextCardPossibilities.push(0);
+          } else if (currDealerTotal + 1 < 17 && (currDealerTotal + 11 > 21 || currDealerTotal + 11 < 17)) {
+            nextCardPossibilities.push(0);
+          }
+
+          if (nextCardPossibilities.length === 0) {
+            console.log("No possibilities for forcing loss");
+            return;
+          }
+
+          nextDealerCard = nextCardPossibilities[Math.floor(Math.random() * nextCardPossibilities.length)];
+          nextDealerCard += 13 * Math.floor(Math.random() * 4);
+
+        }
+      }
+      console.log("The next dealer card is: "+nextDealerCard +"\nAnd value is: "+(nextDealerCard%13+1));
+      m_dealerHand.push(nextDealerCard);
     }
     dealerTotal = total(m_dealerHand);
     console.log("dealer value: " + dealerTotal);
@@ -532,7 +739,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     m_players.forEach((cur, i, arr) => {
       if (cur.blackjack) {
         cur.money += Number(cur.bet) * 1.5;
-        cur.wonGame=2;
+        cur.wonGame = 2;
       } else {
         cur.cards.forEach((hand) => {
           console.log(cur.name + ": Card value: " + total(hand));
@@ -540,17 +747,17 @@ app.service('gameSrvc', function(deckSrvc, $http) {
           if (total(hand) > 21) {
             console.log("OVER");
             cur.money -= Number(cur.bet);
-            cur.wonGame=-1;
+            cur.wonGame = -1;
             console.log(cur.money);
           } else if (dealerTotal > 21) {
             cur.money += Number(cur.bet);
-            cur.wonGame=1;
+            cur.wonGame = 1;
           } else if (total(hand) > dealerTotal) {
             cur.money += Number(cur.bet);
-            cur.wonGame=1;
+            cur.wonGame = 1;
           } else if (total(hand) < dealerTotal) {
             cur.money -= Number(cur.bet);
-            cur.wonGame=-1;
+            cur.wonGame = -1;
           }
         })
       }

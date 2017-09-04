@@ -7,6 +7,7 @@ app.controller('freestyleCtrl', function($scope, gameSrvc) {
 
   let dealerTop = -1;
   gameSrvc.clearAllPlayers();
+  gameSrvc.setForceResult(false);
 
   gameSrvc.addPlayer('David', 10000);
   gameSrvc.addPlayer('Comp1', 10000);
