@@ -13,6 +13,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
   let m_forceResultToChart = false;
   let m_dealerValue="";
   let m_highlightCountCards=false;
+  let m_willShuffle=false;
 
   //For styling
   const TOTALSIZE = 1000;
@@ -68,6 +69,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     deckSrvc.shuffle();
     m_dealerValue="";
     m_highlightCountCards=false;
+    m_willShuffle=false;
 
   }
 
@@ -207,6 +209,10 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     deckSrvc.changeNumDecks(numDecks);
   }
 
+  this.getWillShuffle=function(){
+    return m_willShuffle;
+  }
+
   this.deal = function(forceShuffle, noDealerBlackJack) { //args are for training
     m_dealerValue=0;
     m_humanDone = false;
@@ -215,6 +221,7 @@ app.service('gameSrvc', function(deckSrvc, $http) {
     if ((deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) || forceShuffle === true) {
       deckSrvc.shuffle();
     }
+    m_willShuffle=false;
 
     m_gameStartCount = deckSrvc.getAbsoluteCount();
 
@@ -647,6 +654,8 @@ app.service('gameSrvc', function(deckSrvc, $http) {
           cur.isDoubled = false;
         }
       })
+      m_willShuffle= ((deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) || forceShuffle === true)
+
       return;
     }
     //Currently NOT calling to DB on dealer blackjacks, instead going to put in a certain pecentage of the games as being dealer blackjacks
@@ -803,6 +812,8 @@ app.service('gameSrvc', function(deckSrvc, $http) {
         cur.isDoubled = false;
       }
     })
+    m_willShuffle= ((deckSrvc.cardsRemaining <= MINREMAININGPERPLAYER * m_numPlayers + 1) || forceShuffle === true)
+
   }
 
   function prescreen(caller) {

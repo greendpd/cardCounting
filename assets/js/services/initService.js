@@ -9,6 +9,8 @@ app.service('initSrvc',function(gameSrvc){
     theScope.canDeal = true;
     theScope.title="Freestyle Blackjack"
     theScope.showCash=true;
+    theScope.dealButtonText="Deal";
+
 
   }
   this.showCountTrainOptions=function(theScope){
@@ -21,6 +23,8 @@ app.service('initSrvc',function(gameSrvc){
     theScope.canDeal = true;
     theScope.title="Count Training"
     theScope.showCash=true;
+    theScope.dealButtonText="Deal";
+
 
   }
   this.showChartTrainOptions=function(theScope){
@@ -38,6 +42,8 @@ app.service('initSrvc',function(gameSrvc){
     theScope.canDeal=true;
     theScope.title="Chart Training"
     theScope.showCash=false;
+    theScope.dealButtonText="Deal";
+
 
 
   }

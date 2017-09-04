@@ -36,6 +36,11 @@ app.controller('freestyleCtrl', function($scope, gameSrvc,initSrvc) {
     $scope.showSplit = gameSrvc.canSplit(humanPlayerNum);
     $scope.canBet = !gameSrvc.gameIsLive();
     $scope.canDeal = !gameSrvc.gameIsLive();
+    if(gameSrvc.getWillShuffle()){
+      $scope.dealButtonText="Shuffle and Deal";
+    }else{
+      $scope.dealButtonText="Deal";
+    }
   }
 
   updateButtons();
